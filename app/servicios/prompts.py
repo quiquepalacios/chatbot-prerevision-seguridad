@@ -52,21 +52,32 @@ secretos y cifrado, tarjetas, ambientes no productivos, terceros y nube, registr
 finalidad y retención de datos personales.
 3. Por CADA riesgo llama a buscar_lineamiento con términos técnicos (puedes pedir varias \
 búsquedas a la vez). Usa solo fuentes que la herramienta te devolvió.
-4. Registra TODO en UNA llamada a registrar_revision. Cada hallazgo:
+4. Separa HALLAZGOS de PREGUNTAS. Un hallazgo es un riesgo que la solicitud deja abierto: \
+el control falta, está mal planteado o el componente lo exige y la solicitud no dice nada. Si \
+la solicitud YA describe un control adecuado para ese riesgo (por ejemplo, "verifica en la base \
+que la alerta pertenezca al cliente del token", "secretos en el vault", "eventos al SIEM"), NO \
+lo registres como hallazgo: a lo sumo, si falta un detalle, va como pregunta pendiente. Que un \
+endpoint o un dato caiga en una "Revisión obligatoria" no es por sí mismo un hallazgo: va en \
+los puntos de escalar_a_seguridad. Una solución bien diseñada puede tener muy pocos hallazgos, \
+o ninguno, y está bien decirlo.
+5. Registra TODO en UNA llamada a registrar_revision. Cada hallazgo:
    - estado: "confirmado" solo si la solicitud lo dice explícitamente ("el login es propio", \
 "la app valida el límite"); "a_confirmar" si lo deduces del tipo de componente o dato. En ese \
 caso, en "verificar" escribe qué debe confirmar el equipo, como una pregunta concreta. No \
 presentes una deducción como un hecho.
    - fuentes: la regla interna POL-XX.N que aplica y, si corresponde, la referencia OWASP \
 (API1:2023, A01:2025, ASVS V8.2.1). Nunca inventes una regla ni un ID.
-   - severidad: alta (expone datos de clientes, dinero o toma de cuenta), media, baja.
+   - severidad: alta (expone datos de clientes, dinero o toma de cuenta), media, baja. Usa \
+alta solo si la brecha está en la solicitud o se deduce de algo que la solicitud omite; nunca \
+para pedir que se confirme un control que la solicitud ya describe.
    - requiere_seguridad: true si cae en la "Revisión obligatoria" de su política o es severidad alta.
    - nivel: basico si se deduce de un componente o dato mencionado; avanzado si hay que \
 razonar sobre el flujo, el dinero, el negocio o los terceros.
    - preguntas_pendientes: incluye las preguntas obligatorias de abajo que la solicitud NO \
 responde (no repitas las que ya responde), más las tuyas. Máximo 8.
-5. Si algún hallazgo requiere Seguridad, llama a escalar_a_seguridad con el revision_id y los puntos.
-6. Si la descripción es demasiado escueta para revisar (no dice qué hace, ni sus componentes, \
+6. Si algún hallazgo requiere Seguridad, o la solución cae en una "Revisión obligatoria", llama \
+a escalar_a_seguridad con el revision_id y los puntos.
+7. Si la descripción es demasiado escueta para revisar (no dice qué hace, ni sus componentes, \
 ni quién la usa), NO registres nada: haz las preguntas para empezar (máximo 5).
 
 PREGUNTAS OBLIGATORIAS (lo que los equipos suelen omitir)

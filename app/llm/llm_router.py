@@ -13,6 +13,7 @@ Y opcionalmente:
     LLM_REASONING       auto | off | low | medium | high
     LLM_REASONING_STYLE auto | none | effort | effort_obj | thinking | budget | enable_thinking
     LLM_TOOLS_MODE      auto | tools | anthropic | gemini | prompt | ninguno
+    LLM_OPENAI_API      auto | chat | responses  (protocolo OpenAI para tools + razonamiento)
     LLM_TIMEOUT         segundos
     LLM_2_BASE_URL / LLM_2_API_KEY / LLM_2_MODEL    (respaldo 2; hasta LLM_9_*)
     LLM_FALLBACKS       lista compacta: "url|clave|modelo; url|clave|modelo"
@@ -465,6 +466,7 @@ class Router:
         self.max_intentos = max(1, int(max_intentos))
         self.historial: list[dict[str, Any]] = []
         self._capacidad: dict[str, str] = {}
+        self._responses: set[str] = set()   # endpoints que usan /v1/responses
 
     def _log(self, mensaje: str) -> None:
         if self.verbose:
@@ -581,8 +583,121 @@ class Router:
                            temperature, max_tokens, nivel, modo)
 
     # --- protocolo compatible /chat/completions ---------------------------
+    def _usa_responses(self, endpoint: Endpoint, tools: list[dict], modo: str) -> bool:
+        """Cambio respecto de la copia del curso. En OpenAI, los modelos de razonamiento
+        actuales (gpt-5.4, gpt-6.x…) rechazan `tools` junto con razonamiento en
+        /chat/completions y piden /v1/responses. LLM_OPENAI_API = auto | chat | responses."""
+        pedido = _env("LLM_OPENAI_API", "auto").lower()
+        if pedido in ("chat", "responses"):
+            return pedido == "responses"
+        if endpoint.nombre in self._responses:
+            return True
+        return (modo == "tools" and bool(tools)
+                and "api.openai.com" in endpoint.base_url.lower()
+                and bool(RE_RAZONAMIENTO_OPENAI.match(endpoint.modelo or "")))
+
     def _openai(self, endpoint, mensajes, tools, json_schema,
                 temperature, max_tokens, nivel, modo) -> RespuestaLLM:
+        if self._usa_responses(endpoint, tools, modo):
+            return self._openai_responses(endpoint, mensajes, tools, json_schema,
+                                          max_tokens, nivel, modo)
+        try:
+            return self._openai_chat(endpoint, mensajes, tools, json_schema,
+                                     temperature, max_tokens, nivel, modo)
+        except _ErrorProveedor as exc:
+            # el proveedor indica que este modelo usa tools solo en /v1/responses
+            if exc.status == 400 and "/v1/responses" in str(exc) and modo == "tools" and tools:
+                self._responses.add(endpoint.nombre)
+                return self._openai_responses(endpoint, mensajes, tools, json_schema,
+                                              max_tokens, nivel, modo)
+            raise
+
+    # --- protocolo /v1/responses (OpenAI) ----------------------------------
+    @staticmethod
+    def _a_responses(mensajes: list[dict]) -> tuple[str, list[dict]]:
+        """Mensajes estilo chat -> (instructions, input) de /v1/responses."""
+        instrucciones: list[str] = []
+        entrada: list[dict] = []
+        for m in mensajes:
+            rol = m.get("role")
+            contenido = m.get("content") or ""
+            if rol == "system":
+                instrucciones.append(str(contenido))
+            elif rol == "tool":
+                entrada.append({"type": "function_call_output", "call_id": m.get("tool_call_id", ""),
+                                "output": str(contenido)})
+            elif rol == "assistant":
+                if contenido:
+                    entrada.append({"role": "assistant", "content": str(contenido)})
+                for tc in m.get("tool_calls") or []:
+                    fn = tc.get("function") or {}
+                    argumentos = fn.get("arguments", "{}")
+                    entrada.append({"type": "function_call", "call_id": tc.get("id", ""),
+                                    "name": fn.get("name", ""),
+                                    "arguments": argumentos if isinstance(argumentos, str)
+                                    else json.dumps(argumentos, ensure_ascii=False)})
+            else:
+                entrada.append({"role": "user", "content": str(contenido)})
+        return "\n\n".join(instrucciones), entrada
+
+    def _openai_responses(self, endpoint, mensajes, tools, json_schema,
+                          max_tokens, nivel, modo) -> RespuestaLLM:
+        modelo = endpoint.modelo
+        instrucciones, entrada = self._a_responses(list(mensajes))
+        cuerpo: dict[str, Any] = {"model": modelo, "input": entrada,
+                                  "max_output_tokens": max_tokens, "store": False}
+        if instrucciones:
+            cuerpo["instructions"] = instrucciones
+        if modo == "tools" and tools:
+            cuerpo["tools"] = [{"type": "function", "name": t["name"], "description": t["description"],
+                                "parameters": t["parameters"], "strict": False} for t in tools]
+            cuerpo["tool_choice"] = "auto"
+        if json_schema:
+            cuerpo["text"] = {"format": {"type": "json_schema", "name": "respuesta",
+                                         "schema": json_schema, "strict": False}}
+        if nivel != "off" and RE_RAZONAMIENTO_OPENAI.match(modelo or ""):
+            cuerpo["reasoning"] = {"effort": "medium" if nivel == "auto" else nivel}
+
+        cabeceras = {"Content-Type": "application/json"}
+        if endpoint.api_key:
+            cabeceras["Authorization"] = f"Bearer {endpoint.api_key}"
+        status, datos = _http_post(f"{endpoint.base_url}/responses", cuerpo, cabeceras, self.timeout)
+        if status != 200:
+            raise _ErrorProveedor(status, datos)
+
+        textos: list[str] = []
+        razonamiento: list[str] = []
+        llamadas: list[dict] = []
+        for item in datos.get("output") or []:
+            tipo = item.get("type")
+            if tipo == "message":
+                textos += [c.get("text", "") for c in item.get("content") or []
+                           if c.get("type") == "output_text"]
+            elif tipo == "function_call":
+                llamadas.append({
+                    "id": item.get("call_id") or f"call_{len(llamadas)}_{uuid.uuid4().hex[:6]}",
+                    "name": item.get("name", ""),
+                    "arguments": _json_extraer(item.get("arguments") or "{}") or {},
+                })
+            elif tipo == "reasoning":
+                razonamiento += [s.get("text", "") for s in item.get("summary") or []]
+        uso = datos.get("usage") or {}
+        texto = "".join(textos)
+        respuesta = RespuestaLLM(
+            texto=texto, razonamiento="\n".join(razonamiento), tool_calls=llamadas,
+            endpoint=endpoint.nombre, modelo=datos.get("model") or modelo, modo=modo,
+            familia="openai", crudo=datos,
+            uso={"prompt_tokens": uso.get("input_tokens", 0),
+                 "completion_tokens": uso.get("output_tokens", 0),
+                 "total_tokens": uso.get("total_tokens", 0)},
+        )
+        if json_schema:
+            respuesta.datos = _json_extraer(texto)
+        return respuesta
+
+    # --- protocolo /chat/completions ---------------------------------------
+    def _openai_chat(self, endpoint, mensajes, tools, json_schema,
+                     temperature, max_tokens, nivel, modo) -> RespuestaLLM:
         modelo = endpoint.modelo
         url = f"{endpoint.base_url}/chat/completions"
         cuerpo: dict[str, Any] = {

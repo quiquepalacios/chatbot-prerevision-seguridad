@@ -51,7 +51,7 @@ Si no hay modelo (sin clave, sin red o con el proveedor caído), el bot responde
 - Windows 10/11 (principal) o cualquier sistema con **Python 3.12 de 64 bits**.
 - Unos 3 GB libres: PyTorch, el modelo de embeddings (~200 MB) y la base vectorial.
 - Internet la primera vez: dependencias y modelo de embeddings. Las fuentes (originales y limpias) ya vienen en el repositorio.
-- Una clave de API de **OpenAI**. El modelo configurado es `gpt-6.2-sol` (gama media-alta, con razonamiento y *function calling*; unos USD 0,10-0,15 por revisión). Sin clave, el bot funciona en modo demo.
+- Una clave de API de **OpenAI**. El modelo configurado es `gpt-6.2-sol` (gama media-alta, con razonamiento y *function calling*; unos USD 0,35 por revisión completa de un caso). Sin clave, el bot funciona en modo demo.
 
 ## Instalación y ejecución
 
@@ -107,8 +107,9 @@ Después hay que volver a correr `scripts.indexar`.
 |---|---|---|
 | `LLM_BASE_URL` | `https://api.openai.com/v1` | Endpoint del modelo |
 | `LLM_API_KEY` | *(vacío)* | Clave de OpenAI. Sin ella: modo demo |
-| `LLM_MODEL` | `gpt-6.2-sol` | Modelo de OpenAI de gama media-alta, con razonamiento y *function calling* en Chat Completions. Alternativa más capaz y cara: `gpt-6.2-astra` |
+| `LLM_MODEL` | `gpt-6.2-sol` | Modelo de OpenAI de gama media-alta, con razonamiento y *function calling*. Alternativa más capaz y cara: `gpt-6.2-astra` |
 | `LLM_REASONING` | `auto` (= medium) | Nivel de razonamiento: `low` responde más rápido; `medium` razona mejor los riesgos avanzados |
+| `LLM_OPENAI_API` | `auto` | OpenAI no acepta herramientas con razonamiento en Chat Completions: en `auto` el router usa `/v1/responses` para los modelos de razonamiento (gpt-5.x, gpt-6.x) y Chat Completions para el resto |
 | `LLM_2_BASE_URL`, `LLM_2_API_KEY`, `LLM_2_MODEL` | — | Respaldo opcional si el principal falla (recomendado: `gpt-5.4-mini`) |
 | `LLM_TEMPERATURA` / `LLM_MAX_TOKENS` | `0.2` / `16000` | La temperatura solo la usan los modelos sin razonamiento. En los de razonamiento, el límite de salida incluye lo que el modelo piensa |
 | `RAG_UMBRAL` | `0.79` | Similitud mínima. Calibrada con `conocimiento/preguntas_control.json` |
@@ -193,7 +194,7 @@ Fragmentos de hasta 150 palabras con 25 de solape, cortados por oraciones con sp
 ## Pruebas y evaluación
 
 ```bat
-.\run.bat --tests       :: 171 pruebas, sin red y sin clave (RouterFalso + Chroma temporal)
+.\run.bat --tests       :: 191 pruebas, sin red y sin clave (RouterFalso + Chroma temporal)
 .\run.bat --evaluar     :: escenarios + 3 casos contra la hoja de respuestas
 ```
 
@@ -227,13 +228,25 @@ Fragmentos de hasta 150 palabras con 25 de solape, cortados por oraciones con sp
 
 ## Capturas
 
-Las capturas van en `docs/capturas/`:
+**1. Flujo feliz:** caso AutoConecta con `gpt-6.2-sol`. El modelo buscó en los lineamientos, registró 22 hallazgos con su fuente (confirmados o a confirmar) y derivó a Seguridad los que lo requieren.
 
-1. `01_flujo_feliz.png`: caso AutoConecta con las tarjetas de hallazgos y "va a Seguridad".
-2. `02_informe.png`: informe Markdown exportado.
-3. `03_error.png`: descripción vacía y modo demo.
-4. `04_fuera_de_alcance.png`: "Apruébame el pase".
-5. `05_filtro.png`: "Proyecto Cóndor" bloqueado.
+![Flujo feliz](docs/capturas/01_flujo_feliz.png)
+
+**2. Informe exportado** (Markdown; también hay CSV).
+
+![Informe](docs/capturas/02_informe.png)
+
+**3. Error:** descripción vacía y, después, el modelo no disponible: el bot pasa a modo demo y muestra los lineamientos más cercanos.
+
+![Error](docs/capturas/03_error.png)
+
+**4. Fuera de alcance:** "Apruébame el pase" recibe una respuesta fija, sin llamar al modelo.
+
+![Fuera de alcance](docs/capturas/04_fuera_de_alcance.png)
+
+**5. Filtro:** "Proyecto Cóndor" se bloquea antes del modelo y el mensaje no se guarda.
+
+![Filtro](docs/capturas/05_filtro.png)
 
 ## Limitaciones
 
