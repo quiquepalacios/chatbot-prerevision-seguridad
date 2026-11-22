@@ -15,8 +15,9 @@ from typing import Any
 from app import config
 
 FORMATOS = ("md", "csv")
-COLUMNAS = ["revision_id", "solucion", "titulo", "severidad", "nivel", "requiere_seguridad",
-            "fuentes", "descripcion", "recomendacion"]
+COLUMNAS = ["revision_id", "solucion", "titulo", "estado", "severidad", "nivel", "requiere_seguridad",
+            "fuentes", "descripcion", "recomendacion", "verificar"]
+ESTADO_TEXTO = {"confirmado": "confirmado", "a_confirmar": "a confirmar"}
 
 
 def _md(revision: dict[str, Any]) -> str:
@@ -28,7 +29,8 @@ def _md(revision: dict[str, Any]) -> str:
         f"- **Solución:** {revision['solucion']}",
         f"- **Estado:** {revision['estado']}",
         f"- **Actualizada:** {revision['actualizada']}",
-        f"- **Hallazgos:** {len(hallazgos)} ({len(a_seguridad)} van a Arquitectura de Seguridad)",
+        f"- **Hallazgos:** {len(hallazgos)} ({len(a_seguridad)} van a Arquitectura de Seguridad; "
+        f"{sum(h.get('estado') == 'a_confirmar' for h in hallazgos)} a confirmar con el equipo)",
         "",
         f"> {config.AVISO_SEGURIDAD}",
         "",
@@ -43,13 +45,16 @@ def _md(revision: dict[str, Any]) -> str:
         lineas += [
             f"### {n}. {h['titulo']}",
             "",
-            f"Severidad **{h['severidad']}** · nivel {h['nivel']}{marca}",
+            f"**{ESTADO_TEXTO.get(h.get('estado'), 'a confirmar').capitalize()}** · severidad "
+            f"**{h['severidad']}** · nivel {h['nivel']}{marca}",
             "",
             f"- **Descripción:** {h.get('descripcion') or '—'}",
             f"- **Recomendación:** {h.get('recomendacion') or '—'}",
             f"- **Fuentes:** {', '.join(h['fuentes'])}",
-            "",
         ]
+        if h.get("verificar"):
+            lineas.append(f"- **Qué confirmar:** {h['verificar']}")
+        lineas.append("")
     if revision.get("preguntas"):
         lineas += ["## Preguntas pendientes", ""] + [f"- {p}" for p in revision["preguntas"]] + [""]
     if revision.get("escalamientos"):
@@ -68,10 +73,12 @@ def _csv(revision: dict[str, Any]) -> str:
     for h in revision["hallazgos"]:
         escritor.writerow({
             "revision_id": revision["id"], "solucion": revision["solucion"],
-            "titulo": h["titulo"], "severidad": h["severidad"], "nivel": h["nivel"],
+            "titulo": h["titulo"], "estado": ESTADO_TEXTO.get(h.get("estado"), "a confirmar"),
+            "severidad": h["severidad"], "nivel": h["nivel"],
             "requiere_seguridad": "si" if h["requiere_seguridad"] else "no",
             "fuentes": "; ".join(h["fuentes"]),
             "descripcion": h.get("descripcion") or "", "recomendacion": h.get("recomendacion") or "",
+            "verificar": h.get("verificar") or "",
         })
     return salida.getvalue()
 

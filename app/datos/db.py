@@ -84,6 +84,9 @@ CREATE TABLE IF NOT EXISTS hallazgos (
     fuentes       TEXT NOT NULL,
     requiere_seguridad INTEGER NOT NULL,
     nivel         TEXT NOT NULL,
+    estado        TEXT NOT NULL DEFAULT 'a_confirmar'
+                  CHECK (estado IN ('confirmado', 'a_confirmar')),
+    verificar     TEXT,
     fuente_recuperada INTEGER,
     creado        TEXT NOT NULL
 );
@@ -127,7 +130,26 @@ def inicializar() -> None:
     with conexion() as con:
         con.execute("PRAGMA journal_mode = WAL")
         con.executescript(ESQUEMA)
+        _migrar(con)
     purgar_antiguos()
+
+
+# Columnas agregadas después de la primera versión: una base existente las recibe
+# al arrancar (SQLite no las agrega con CREATE TABLE IF NOT EXISTS).
+MIGRACIONES = {
+    "hallazgos": {
+        "estado": "TEXT NOT NULL DEFAULT 'a_confirmar'",
+        "verificar": "TEXT",
+    },
+}
+
+
+def _migrar(con: sqlite3.Connection) -> None:
+    for tabla, columnas in MIGRACIONES.items():
+        existentes = {f["name"] for f in con.execute(f"PRAGMA table_info({tabla})")}
+        for nombre, definicion in columnas.items():
+            if nombre not in existentes:
+                con.execute(f"ALTER TABLE {tabla} ADD COLUMN {nombre} {definicion}")
 
 
 def purgar_antiguos(dias: int | None = None) -> int:
@@ -239,11 +261,12 @@ def _insertar_hallazgos(con: sqlite3.Connection, revision_id: str,
     ahora = _ahora()
     con.executemany(
         "INSERT INTO hallazgos (revision_id, titulo, severidad, descripcion, recomendacion, "
-        "fuentes, requiere_seguridad, nivel, fuente_recuperada, creado) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "fuentes, requiere_seguridad, nivel, estado, verificar, fuente_recuperada, creado) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [(revision_id, h["titulo"], h["severidad"], h.get("descripcion", ""),
           h.get("recomendacion", ""), json.dumps(h["fuentes"], ensure_ascii=False),
           int(bool(h["requiere_seguridad"])), h.get("nivel", "basico"),
+          h.get("estado", "a_confirmar"), h.get("verificar", ""),
           None if h.get("fuente_recuperada") is None else int(bool(h["fuente_recuperada"])),
           ahora) for h in hallazgos])
 
@@ -281,7 +304,8 @@ def revisiones_de(sesion_id: str) -> list[dict[str, Any]]:
     with conexion() as con:
         filas = con.execute(
             "SELECT r.id, r.solucion, r.estado, r.actualizada, COUNT(h.id) AS hallazgos, "
-            "SUM(h.requiere_seguridad) AS a_seguridad FROM revisiones r "
+            "SUM(h.requiere_seguridad) AS a_seguridad, "
+            "SUM(h.estado = 'a_confirmar') AS a_confirmar FROM revisiones r "
             "LEFT JOIN hallazgos h ON h.revision_id = r.id WHERE r.sesion_id = ? "
             "GROUP BY r.id ORDER BY r.actualizada DESC", (sesion_id,)).fetchall()
     return [dict(f) for f in filas]
@@ -317,6 +341,8 @@ def metricas() -> dict[str, Any]:
             "SELECT latencia_ms FROM turnos WHERE ruta = 'modelo' ORDER BY latencia_ms")]
         severidades = {f["severidad"]: f["n"] for f in con.execute(
             "SELECT severidad, COUNT(*) AS n FROM hallazgos GROUP BY severidad")}
+        estados = {f["estado"]: f["n"] for f in con.execute(
+            "SELECT estado, COUNT(*) AS n FROM hallazgos GROUP BY estado")}
         revisiones = con.execute("SELECT COUNT(*) AS n, SUM(estado = 'escalada') AS escaladas "
                                  "FROM revisiones").fetchone()
 
@@ -332,6 +358,7 @@ def metricas() -> dict[str, Any]:
                         "p95_modelo": percentil(0.95)},
         "revisiones": revisiones["n"], "escaladas": revisiones["escaladas"] or 0,
         "hallazgos_por_severidad": severidades,
+        "hallazgos_por_estado": estados,
     }
 
 

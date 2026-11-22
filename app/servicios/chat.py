@@ -244,7 +244,8 @@ class ServicioChat:
             h = herramientas.hallazgos_turno
             texto_modelo = (f"Registré la revisión {herramientas.revisiones_turno[-1]} con "
                             f"{len(h)} hallazgos ({sum(x['requiere_seguridad'] for x in h)} van a "
-                            "Seguridad).")
+                            f"Seguridad; {sum(x.get('estado') == 'a_confirmar' for x in h)} "
+                            "hay que confirmarlos con el equipo).")
         salida = revisar_salida(texto_modelo or "No pude completar la revisión. Intenta de nuevo.")
         if salida.aprobaciones_retiradas:
             logs.aviso("salida.aprobacion_retirada", turno_id,

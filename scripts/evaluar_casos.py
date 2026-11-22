@@ -2,9 +2,10 @@
 
     1. escenarios   casos_prueba/escenarios.json: error, fuera de alcance, FAQ, filtros y
                     trampas. Los que no necesitan modelo se evalúan siempre.
-    2. casos        caso_01..03 contra respuestas_esperadas.md (60 hallazgos: 42 básicos,
-                    18 avanzados). Necesita el modelo configurado en el .env.
-    3. métricas     detección de básicos (/42) y avanzados (/18), hallazgos no esperados,
+    2. casos        caso_01..03 (solicitudes a alto nivel, como llegan en la realidad)
+                    contra respuestas_esperadas.md (37 riesgos: 21 básicos, 16 avanzados).
+                    Necesita el modelo configurado en el .env.
+    3. métricas     detección de básicos (/21) y avanzados (/16), hallazgos no esperados,
                     citas correctas (regla POL exacta y política), marca "va a Seguridad",
                     latencia p50/p95 y tokens por caso.
 
@@ -256,6 +257,9 @@ def _metricas(pares: list[Par], no_esperados: int, total_bot: int) -> dict[str, 
         "seguridad_detectada": (sum(p.hallazgo is not None and bool(p.hallazgo.get("requiere_seguridad"))
                                     for p in a_seguridad), len(a_seguridad)),
         "seguridad_coincide": (sum(bool(p.seguridad_ok) for p in emparejados), len(emparejados)),
+        # en una solicitud a alto nivel casi todo se deduce: debe presentarse "a confirmar"
+        "a_confirmar": (sum(p.hallazgo.get("estado", "a_confirmar") != "confirmado"
+                            for p in emparejados), len(emparejados)),
     }
 
 
@@ -299,6 +303,8 @@ def reporte_markdown(datos: dict[str, Any]) -> str:
             f"| Hallazgos no esperados (posibles inventados, revisar) | {total['no_esperados']} de "
             f"{total['hallazgos_bot']} |",
             f"| Cita la regla POL esperada | {_frac(total['cita_regla_exacta'])} |",
+            f"| Presentados como \"a confirmar\" (deducidos de la solicitud) | "
+            f"{_frac(total.get('a_confirmar', (0, 0)))} |",
             f"| Cita la política POL esperada | {_frac(total['cita_politica'])} |",
             f"| Puntos de Seguridad marcados \"va a Seguridad\" | {_frac(total['seguridad_detectada'])} |",
             f"| Latencia por caso p50 / p95 | {datos['latencia']['p50']} / {datos['latencia']['p95']} ms |",
@@ -334,19 +340,19 @@ def escribir_salidas(datos: dict[str, Any], casos: list[ResultadoCaso], carpeta:
     with (carpeta / "emparejamientos.csv").open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
         w.writerow(["caso", "esperado_n", "nivel", "esperado", "pol_esperadas", "seguridad_esperada",
-                    "hallazgo_bot", "fuentes_bot", "requiere_seguridad_bot", "puntaje",
+                    "hallazgo_bot", "estado_bot", "fuentes_bot", "requiere_seguridad_bot", "puntaje",
                     "cita_regla", "cita_politica"])
         for c in casos:
             for p in c.pares:
                 h = p.hallazgo or {}
                 w.writerow([c.caso, p.esperado.numero, p.esperado.nivel, p.esperado.texto,
                             "; ".join(p.esperado.pols), "si" if p.esperado.seguridad else "no",
-                            h.get("titulo", ""), "; ".join(h.get("fuentes", [])),
+                            h.get("titulo", ""), h.get("estado", ""), "; ".join(h.get("fuentes", [])),
                             "" if not h else ("si" if h.get("requiere_seguridad") else "no"),
                             p.puntaje or "", "si" if p.cita_regla else "", "si" if p.cita_politica else ""])
             for h in c.no_esperados:
                 w.writerow([c.caso, "", "", "(no esperado)", "", "", h.get("titulo", ""),
-                            "; ".join(h.get("fuentes", [])),
+                            h.get("estado", ""), "; ".join(h.get("fuentes", [])),
                             "si" if h.get("requiere_seguridad") else "no", "", "", ""])
     RUTA_REPORTE_MD.parent.mkdir(parents=True, exist_ok=True)
     RUTA_REPORTE_MD.write_text(reporte_markdown(datos), "utf-8")

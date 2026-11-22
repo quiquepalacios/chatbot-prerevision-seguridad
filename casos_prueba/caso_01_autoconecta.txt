@@ -1,68 +1,31 @@
-AutoConecta - Documento de arquitectura (v0.4, BORRADOR)
-Banco Andesur / Tribu Creditos - squad Vehicular
-ult. actualizacion 14/11
+DOCUMENTO DE DISEÑO (RESUMEN) - AutoConecta
+Squad: Crédito Vehicular · Salida prevista: marzo 2027
 
-1. Contexto
+1. Objetivo
+Dar a los clientes con crédito vehicular un módulo en la app de Banca Móvil para ver dónde está su auto, agendar mantenimiento en talleres afiliados y recibir devoluciones cuando se cancela un servicio del taller.
 
-AutoConecta acompaña al Credito Vehicular. Desde este año el banco exige GPS en los autos que financia, asi que aprovechamos el dispositivo para darle valor al cliente: desde la app ve donde esta su auto, agenda mantenimiento en talleres afiliados y compra accesorios que se cargan a su cuenta. Si devuelve un accesorio, el monto se le abona a la misma cuenta.
-Tambien tiene una seccion de reseñas de talleres, donde los clientes califican el servicio.
+2. Funcionalidades
+- Ver la ubicación actual del vehículo y el historial de ubicaciones de los últimos meses.
+- Agendar, reprogramar y cancelar citas de mantenimiento en talleres afiliados.
+- Devoluciones: si el taller cancela un servicio ya pagado, el monto se abona en la cuenta del cliente.
 
-2. Componentes
+3. Arquitectura
+- App Banca Móvil (módulo nuevo) -> API Gateway del banco -> microservicios en AWS (vehículos, citas y devoluciones) con base de datos PostgreSQL en AWS.
+- Dentro del clúster los microservicios se llaman entre sí por la red interna.
+- La versión piloto de la API de vehículos (v1, 2025) sigue activa para la app anterior hasta que migren todos los usuarios.
 
-- Front en React (web) + la app movil actual del credito. Nginx hace de gateway y enruta /identity, /resenas y /taller a cada servicio.
-- Identity (Java / Spring Boot): registro, login, perfil, vehiculos y reseteo de contraseña. BD PostgreSQL.
-- Reseñas (Go): reseñas de talleres y validacion de cupones de descuento. BD MongoDB.
-- Taller (Python / Django): tienda de accesorios, ordenes, devoluciones y contacto con talleres. Usa la misma PostgreSQL que Identity (otro esquema, mismo usuario de BD, se hizo asi para avanzar rapido).
-- Servicio de Abonos (Java): recibe la orden de devolucion y llama al core bancario para abonar.
-- Proveedor GPS (tercero): nos envia la ubicacion de cada vehiculo cada 5 minutos por un webhook.
-- Servidor de correo para OTP y PIN del vehiculo.
+4. Integraciones
+- Proveedor de GPS: instala el equipo en cada auto y nos envía las posiciones cada 2 minutos por webhook.
+- Talleres afiliados: al agendar una cita les enviamos los datos del cliente (nombre, DNI, celular y placa) para que lo atiendan. Cada taller entra a un portal de citas con un usuario y una clave que comparte su personal.
+- Core bancario: las devoluciones se abonan con el servicio de abonos del core, usando una cuenta de servicio de AutoConecta.
+- El área de Cobranzas pidió acceso al historial de ubicaciones para encontrar vehículos de clientes con cuotas atrasadas.
 
-Por ahora todo corre con docker-compose en una VM on-premise. El paso a OpenShift esta en el roadmap del Q2.
+5. Autenticación
+Los clientes ingresan con el login de Banca Móvil (IAM del banco).
 
-3. Autenticacion
+6. Monitoreo
+Logs de aplicación en CloudWatch.
 
-Login con email y contraseña -> JWT firmado, duracion 7 dias. Cada servicio valida el token por su cuenta; Identity publica la clave en un endpoint para que los demas la descarguen. No hay refresh token ni forma de invalidar un token antes de que venza.
-
-Recuperar contraseña: OTP de 4 digitos al correo. Conviven /identity/api/auth/v3/check-otp (nuevo, con limite de 10 intentos) y la v2, que sigue activa porque la version anterior de la app movil todavia la llama. Se apaga "pronto".
-
-4. Vehiculos y ubicacion
-
-Al registrar el auto el cliente ingresa el VIN y un PIN que le llega por correo. Cada vehiculo tiene un UUID.
-Ubicacion: GET /identity/api/v2/vehicle/{vehicleId}/location. Como el UUID no se puede adivinar no validamos que el vehiculo sea del usuario logueado (se discutio en la daily, quedo asi).
-Guardamos todo el historial de ubicaciones, sin fecha de borrado, porque Riesgos dijo que podria servir para cobranzas.
-
-5. Reseñas
-
-GET /resenas/api/v2/talleres/{id}/resenas. Para mostrar al autor devolvemos el objeto completo del cliente: nombre, email, DNI, vehicleId y foto. El front solo pinta nombre y foto.
-Cupones: el codigo que ingresa el cliente llega como JSON y se pasa directo al filtro de la consulta en Mongo.
-
-6. Taller
-
-* Agendar mantenimiento: el front manda codigo_taller, la descripcion del problema y url_taller (cada taller afiliado tiene su propio sistema y su URL). Taller llama a esa URL desde el backend y le envia nombre, DNI, celular y placa del cliente. Tambien acepta reintentar_si_falla y numero_reintentos por si el taller no responde.
-  Los talleres son negocios pequeños, no pasaron evaluacion de proveedores porque "solo reciben datos de contacto".
-* Reportes del taller: /taller/api/reportes?reporte_id=N. Los IDs son correlativos.
-* Ordenes: POST para comprar, PUT /taller/api/ordenes/{id} para actualizar. El PUT recibe la orden tal cual viene (cantidad, estado, etc.) y la guarda.
-* Devoluciones: cuando una orden pasa a estado "devuelto", Taller llama a Abonos con el numero de cuenta y el monto que vienen en la orden. Abonos llama al core. Si el core demora mas de 8 segundos, Taller reintenta la llamada (hasta 3 veces).
-* Abonos se conecta al core con la cuenta de servicio svc_autoconecta. Se le dio perfil de abono general porque el perfil acotado demoraba 3 semanas en aprobarse.
-* Cupones de la tienda: /taller/api/tienda/aplicar_cupon. La consulta a Postgres se arma concatenando el codigo.
-
-7. Perfil
-
-El cliente puede subir un video de presentacion para su perfil en reseñas. Hay un endpoint que convierte el formato y recibe parametros_conversion desde el cliente.
-Para soporte existe DELETE /identity/api/v2/admin/videos/{id}. Solo esta escondido en el front, pendiente ponerle rol.
-
-8. Integracion con proveedor GPS
-
-El proveedor nos llama a POST /identity/api/gps/webhook con vehicleId, latitud y longitud. El endpoint es publico (el proveedor no soporta otra cosa por ahora). No validamos firma ni IP de origen.
-
-9. Logs / monitoreo
-
-Logs a stdout, los revisamos con docker logs cuando hay incidentes. No hay alertas ni se envian al SIEM del banco todavia.
-
-10. Pendientes
-
-- apagar check-otp v2
-- pasar secretos a vault (hoy estan como variables en el docker-compose.yml, que esta en el repo)
-- pedir perfil acotado para svc_autoconecta
-- pentest antes de salir a prod (fecha por definir)
-- ¿WAF delante de Nginx? (consultar con infra)
+7. Pendientes
+- Definir cuánto tiempo guardamos las posiciones del GPS.
+- Definir con Cobranzas el alcance de su acceso.

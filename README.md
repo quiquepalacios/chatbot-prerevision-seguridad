@@ -36,7 +36,7 @@ Un turno recorre estos pasos (`app/servicios/chat.py`). Lo que se puede decidir 
 | 1. Guardias de entrada (`app/seguridad/entrada.py`) | Enmascaran DNI, IP, tarjeta, número de cuenta, email, celular, claves y tokens. Bloquean nombres de proyectos confidenciales y la expresión "enfoque estratégico" (lista en `app/seguridad/terminos_bloqueados.json`) y los intentos de *prompt injection*. Un mensaje bloqueado **no se guarda**. | No |
 | 2. Alcance (`app/seguridad/alcance.py`) | "Apruébame el pase", "revisa este código", "¿cuál es mi saldo?" reciben una respuesta fija. | No |
 | 3. FAQ del proceso (`app/servicios/faq.py`) | Clasificador TF-IDF con umbral y margen: "¿cómo pido revisión?", "¿qué es BOLA?", "¿cuánto demora Seguridad?". | No |
-| 4. Modelo + herramientas (`app/servicios/herramientas.py`) | *Function calling* con `buscar_lineamiento` (RAG), `registrar_revision`, `escalar_a_seguridad` y `exportar_informe`. Memoria: últimos 8 mensajes ya enmascarados. | Sí |
+| 4. Modelo + herramientas (`app/servicios/herramientas.py`) | *Function calling* con `buscar_lineamiento` (RAG), `registrar_revision`, `escalar_a_seguridad` y `exportar_informe`. Las solicitudes llegan a alto nivel: el modelo deduce riesgos de los componentes, datos e integraciones, marca cada punto como **confirmado** (la solicitud lo dice) o **a confirmar** (se deduce, con qué debe verificar el equipo) y hace 6 preguntas obligatorias sobre lo que los equipos suelen omitir. Memoria: últimos 8 mensajes ya enmascarados. | Sí |
 | 5. Guardias de salida (`app/seguridad/salida.py`) | Retiran frases de aprobación ("puede pasar a producción"). Rechazan hallazgos sin fuente válida: una regla `POL-XX.N` que no existe no pasa. Vuelven a enmascarar y agregan el aviso. | — |
 | 6. Cierre (`app/datos/`) | SQLite (mensajes enmascarados, revisiones, hallazgos, escalamientos, métricas), log JSONL por turno e informe exportable en Markdown o CSV. | — |
 
@@ -151,7 +151,8 @@ Formato de cada hallazgo (`hallazgos` en la respuesta de `/api/chat`):
 ```json
 {"titulo": "Ubicación del vehículo sin validar dueño", "severidad": "alta",
  "descripcion": "…", "recomendacion": "…", "fuentes": ["POL-01.1", "API1:2023"],
- "requiere_seguridad": true, "nivel": "basico", "fuente_recuperada": true}
+ "requiere_seguridad": true, "nivel": "basico", "estado": "a_confirmar",
+ "verificar": "¿El servicio valida el dueño del vehículo en cada consulta?", "fuente_recuperada": true}
 ```
 
 ## Datos: fuentes, limpieza e índice
@@ -183,13 +184,13 @@ Fragmentos de hasta 150 palabras con 25 de solape, cortados por oraciones con sp
 ## Pruebas y evaluación
 
 ```bat
-.\run.bat --tests       :: 161 pruebas, sin red y sin clave (RouterFalso + Chroma temporal)
+.\run.bat --tests       :: 171 pruebas, sin red y sin clave (RouterFalso + Chroma temporal)
 .\run.bat --evaluar     :: escenarios + 3 casos contra la hoja de respuestas
 ```
 
 `casos_prueba/` contiene:
-- 3 casos basados en apps vulnerables conocidas (crAPI, VAmPI y Juice Shop) y adaptados a un banco;
-- la hoja de respuestas, con **60 hallazgos** (42 básicos y 18 avanzados), cada uno con su referencia OWASP y la regla POL que debería citar el bot;
+- 3 casos inspirados en apps vulnerables conocidas (crAPI, VAmPI y Juice Shop), llevados a productos de un banco. Están escritos **a alto nivel, como llega una solicitud real**: un resumen de documento de diseño, un mensaje de chat y un formulario. Describen qué hace la solución, sus componentes, datos, integraciones y accesos, no el detalle de programación;
+- la hoja de respuestas, con **37 riesgos y requisitos esperados** (21 básicos y 16 avanzados) que un revisor puede deducir de esa descripción. Cada uno tiene su referencia OWASP, la regla POL que debería citar el bot y si va a Seguridad. Los errores de programación no se pueden ver en una solicitud: los cubren el análisis de código y el pentest;
 - 5 casos trampa: un diseño bien hecho, un proyecto confidencial, "enfoque estratégico", inyección y datos sensibles;
 - 10 escenarios.
 

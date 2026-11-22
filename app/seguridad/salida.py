@@ -88,6 +88,13 @@ SEVERIDADES = {
 }
 NIVELES = {"basico": "basico", "básico": "basico", "avanzado": "avanzado",
            "b": "basico", "a": "avanzado"}
+# Una solicitud real es de alto nivel: casi todo lo que se encuentra se DEDUCE de
+# un componente o un dato ("los clientes ven la ubicación de su auto") y hay que
+# confirmarlo con el equipo. Solo es "confirmado" lo que la solicitud dice de
+# forma explícita ("el login es propio"). Sin estado, se asume lo prudente.
+ESTADOS = {"confirmado": "confirmado", "confirmada": "confirmado", "confirmed": "confirmado",
+           "a_confirmar": "a_confirmar", "a confirmar": "a_confirmar", "por confirmar": "a_confirmar",
+           "por_confirmar": "a_confirmar", "riesgo": "a_confirmar", "to_confirm": "a_confirmar"}
 
 
 def _como_lista(valor: Any) -> list[str]:
@@ -144,6 +151,8 @@ def validar_hallazgo(crudo: dict[str, Any],
         "fuentes": validas,
         "requiere_seguridad": requiere,
         "nivel": NIVELES.get(str(crudo.get("nivel", "")).strip().lower(), "basico"),
+        "estado": ESTADOS.get(str(crudo.get("estado", "")).strip().lower(), "a_confirmar"),
+        "verificar": _texto_seguro(crudo.get("verificar"), 500),
         "cita_interna": any(f.startswith("POL-") for f in validas),
     }
     if citas_recuperadas is not None:

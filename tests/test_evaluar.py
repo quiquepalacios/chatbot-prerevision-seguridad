@@ -9,17 +9,17 @@ from tests.conftest import llamada, respuesta
 from tests.test_indice import embedder_falso
 
 
-def test_hoja_de_respuestas_tiene_60_hallazgos_con_su_regla():
+def test_hoja_de_respuestas_tiene_37_riesgos_con_su_regla():
     hoja = ev.leer_hoja()
     todos = [e for c in hoja.values() for e in c]
-    assert [len(hoja[c]) for c in ("01", "02", "03")] == [21, 18, 21]
-    assert sum(e.nivel == "basico" for e in todos) == 42
-    assert sum(e.nivel == "avanzado" for e in todos) == 18
-    assert sum(e.seguridad for e in todos) == 32
+    assert [len(hoja[c]) for c in ("01", "02", "03")] == [13, 11, 13]
+    assert sum(e.nivel == "basico" for e in todos) == 21
+    assert sum(e.nivel == "avanzado" for e in todos) == 16
+    assert sum(e.seguridad for e in todos) == 25
     assert all(e.pols for e in todos)                         # todos tienen POL
     primero = hoja["01"][0]
     assert primero.pols == ["POL-01.1", "POL-01.2"] and primero.seguridad
-    assert "**" not in hoja["01"][14].texto                   # sin marcas de negrita
+    assert "**" not in hoja["01"][8].texto                    # sin marcas de negrita
 
 
 def _esperado(n, texto, pols, nivel="basico", seguridad=True):
@@ -85,7 +85,8 @@ def test_caso_completo_con_router_falso(servicio, tmp_path, monkeypatch):
                                       hallazgos=exactos + [inventado])]),
         respuesta("Listo."),
     ]
-    assert ev.main(["--casos", "02", "--sin-casos"], servicio=servicio,
+    assert ev.main(["--casos", "02", "--sin-casos", "--salida", str(tmp_path / "eval")],
+                   servicio=servicio,
                    embedder=embedder_falso) in (0, 1)        # --sin-casos: solo escenarios
     servicio.router_falso.respuestas = [
         respuesta(tool_calls=[llamada("registrar_revision", solucion="Constancias",
@@ -94,7 +95,7 @@ def test_caso_completo_con_router_falso(servicio, tmp_path, monkeypatch):
     ]
     caso = ev.evaluar_caso(servicio, "02", hoja["02"], embedder_falso, 0.9, "s-eval")
     m = caso.metricas()
-    assert m["detectados"] == (5, 18) and m["no_esperados"] == 1
+    assert m["detectados"] == (5, 11) and m["no_esperados"] == 1
     assert m["cita_regla_exacta"] == (5, 5) and caso.revision_id
     ev.escribir_salidas({"fecha": "hoy", "modelo": "falso", "umbral": 0.9, "escenarios": [],
                          "resumen_escenarios": {"ok": 0, "falla": 0, "omitido": 0},
@@ -102,5 +103,5 @@ def test_caso_completo_con_router_falso(servicio, tmp_path, monkeypatch):
                          "total": m, "latencia": {"p50": 1, "p95": 1},
                          "tokens": {"entrada": 1, "salida": 1}}, [caso], tmp_path / "salida")
     filas = (tmp_path / "salida" / "emparejamientos.csv").read_text("utf-8-sig").splitlines()
-    assert len(filas) == 1 + 18 + 1 and "(no esperado)" in filas[-1]
-    assert "Fallas básicas detectadas | 5/13" in (tmp_path / "resultados.md").read_text("utf-8")
+    assert len(filas) == 1 + 11 + 1 and "(no esperado)" in filas[-1]
+    assert "Fallas básicas detectadas | 5/6" in (tmp_path / "resultados.md").read_text("utf-8")

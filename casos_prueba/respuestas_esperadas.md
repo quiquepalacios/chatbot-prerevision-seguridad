@@ -1,94 +1,81 @@
 # Respuestas esperadas - Banco Andesur (para evaluar el bot, NO se cargan en el RAG)
 
-Referencias: OWASP API Security Top 10 2023 (API1-API10), OWASP Top 10:2025 (A01-A10), PCI DSS y Reglamento SBS 504-2021.
-Nivel: **B** = básico (visible en un endpoint o configuración) / **A** = avanzado (hay que razonar sobre el flujo, el negocio o terceros).
-Seguridad = el bot debe marcarlo para revisión humana del área de Arquitectura de Seguridad.
+## Por qué los casos están escritos a alto nivel
+
+Una solicitud de revisión real no describe servicio por servicio ni el detalle de programación: el arquitecto o el líder técnico cuenta qué hace la solución, sus componentes, qué datos maneja, con quién se integra y cómo entran los usuarios. Muchas veces no conoce el código, y aunque lo conozca, no lo escribe.
+
+Por eso los tres casos llegan como llegan en la realidad (un resumen de documento de diseño, un mensaje de chat y un formulario) y la hoja no espera "fallas de código" sino **riesgos y requisitos que un revisor puede deducir de lo que la solicitud sí dice**. Por ejemplo, "ver la ubicación del auto" obliga a validar que el auto sea del cliente (POL-01.1), y "abonos vía el core" obliga a la idempotencia (POL-06.2). Lo que la solicitud no cuenta, el bot lo pregunta. Los errores de programación (inyección SQL, contraseñas en texto plano, un endpoint de depuración) no se pueden ver en una solicitud: los cubren el análisis de código (SAST/DAST) y el pentest.
+
+Los casos se inspiran en apps vulnerables de OWASP (crAPI, VAmPI y Juice Shop), llevadas a productos de un banco y a su forma de solicitud.
+
+## Cómo leer la hoja
+
+Referencias: OWASP API Security Top 10 2023 (API1-API10), OWASP Top 10:2025 (A01-A10), PCI DSS, Reglamento SBS 504-2021 y Ley 29733 de protección de datos personales.
+Nivel: **B** = básico (se deduce de un componente o dato que la solicitud menciona) / **A** = avanzado (hay que razonar sobre el flujo, el dinero, el negocio o los terceros).
+Seguridad = el bot debe marcarlo para revisión del área de Arquitectura de Seguridad (sección "Revisión obligatoria" de la política o severidad alta).
 POL = regla de LSA-2026 que el bot debería citar (la primera es la principal).
 
 ## Caso 01 - AutoConecta / Crédito Vehicular (basado en OWASP crAPI)
 
-| # | Hallazgo esperado | Nivel | Referencia | POL | Seguridad |
+| # | Riesgo o requisito esperado | Nivel | Referencia | POL | Seguridad |
 |---|---|---|---|---|---|
-| 1 | Ubicación del vehículo sin validar dueño (el UUID no reemplaza la autorización) | B | API1, A01 | POL-01.1, POL-01.2 | Sí |
-| 2 | Reportes del taller con ID correlativo, sin validar dueño | B | API1 | POL-01.1, POL-01.3 | |
-| 3 | OTP de 4 dígitos y v2 sin límite de intentos (fuerza bruta, toma de cuenta) | B | API2, A07, SBS 504 (autenticación) | POL-02.2, POL-02.3, POL-02.6 | Sí |
-| 4 | Versión antigua de API todavía expuesta | B | API9 | POL-09.5 | |
-| 5 | Reseñas devuelven email, DNI y vehicleId del cliente (además habilita el #1) | B | API3 | POL-09.1 | Sí |
-| 6 | PUT de órdenes acepta estado y cantidad del cliente | B | API3 | POL-06.5, POL-07.2 | |
-| 7 | url_taller: el backend llama a una URL enviada por el usuario | B | API7, A01 (SSRF) | POL-08.1, POL-08.2 | Sí |
-| 8 | numero_reintentos sin tope: amplificación / DoS | B | API4 | POL-07.6 | |
-| 9 | Cupones: JSON directo al filtro de Mongo | B | A05 (NoSQL injection) | POL-07.1 | |
-| 10 | aplicar_cupon concatena el código en SQL | B | A05 (SQL injection) | POL-07.1 | Sí |
-| 11 | Endpoint admin solo escondido en el front | B | API5, A01 | POL-01.4 | |
-| 12 | parametros_conversion enviado por el cliente | B | API3, A05 | POL-07.6 | |
-| 13 | JWT de 7 días sin revocación; validación descentralizada | B | API2, A07 | POL-04.1, POL-04.2, POL-04.5 | |
-| 14 | Secretos en docker-compose dentro del repo; mismo usuario de BD para 2 servicios | B | A02, A04 | POL-10.3, POL-05.5 | |
-| 15 | **Abono con número de cuenta y monto tomados de la orden**: se puede abonar a cualquier cuenta o cambiar el monto | A | API6, A06 | POL-06.1, POL-03.3 | Sí |
-| 16 | **Reintento al core sin idempotencia**: un timeout puede generar doble abono | A | A06, API6 | POL-06.2 | Sí |
-| 17 | **Cuenta de servicio svc_autoconecta con perfil de abono general**: si se compromete el servicio, se puede abonar a cualquier cuenta del banco | A | A01 (mínimo privilegio) | POL-05.2 | Sí |
-| 18 | **Talleres afiliados reciben DNI, celular y placa sin evaluación de proveedor ni contrato de protección de datos** | A | API10, SBS 504 (proveedores) | POL-13.1, POL-13.2 | Sí |
-| 19 | **Historial de ubicación sin plazo de retención y reutilizado para cobranzas**: dato personal usado para otra finalidad | A | Ley de protección de datos personales | POL-15.1, POL-15.2 | Sí |
-| 20 | **Webhook del proveedor GPS público y sin firma**: cualquiera puede falsear ubicaciones | A | API10, A08 | POL-08.4 | |
-| 21 | Sin envío al SIEM ni alertas | B | A09 | POL-14.1, POL-14.5 | |
+| 1 | Ubicación e historial del vehículo: cada consulta debe validar que el auto sea del cliente (un identificador difícil de adivinar no basta) | B | API1, A01 | POL-01.1, POL-01.2 | Sí |
+| 2 | Webhook del proveedor GPS: validar firma, marca de tiempo y origen; si no, se pueden falsear posiciones | B | API10, A08 | POL-08.4 | |
+| 3 | Microservicios que se llaman por la red interna sin autenticarse entre sí | B | A01 | POL-05.1 | |
+| 4 | Talleres con usuario y clave compartidos por todo su personal: credenciales propias, nominales y revocables | B | A07, API10 | POL-13.3 | Sí |
+| 5 | Plazo de retención de las posiciones GPS sin definir (máximo 90 días salvo requerimiento legal) | B | Ley 29733 | POL-15.2 | |
+| 6 | Datos de clientes en AWS: evaluación de nube y de ubicación de los datos | B | SBS 504 (nube y proveedores) | POL-13.4 | Sí |
+| 7 | Versión piloto v1 todavía activa: inventario, fecha de apagado y mismos controles | B | API9 | POL-09.5 | |
+| 8 | Logs solo en CloudWatch: sin envío al SIEM ni alertas de abuso | B | A09 | POL-14.1, POL-14.5 | |
+| 9 | **Talleres reciben nombre, DNI, celular y placa**: evaluación del proveedor, contrato de datos y enviar solo lo mínimo (un código de cita) | A | API10, SBS 504 (proveedores) | POL-13.1, POL-13.2 | Sí |
+| 10 | **Devoluciones abonadas vía el core**: monto y cuenta destino deben salir de registros del servidor, no de datos editables | A | API6, A06 | POL-06.1 | Sí |
+| 11 | **Reintentos al core sin idempotencia**: un timeout puede abonar dos veces | A | A06, API6 | POL-06.2 | Sí |
+| 12 | **Cuenta de servicio con acceso al core**: solo los permisos que su función necesita | A | A01 (mínimo privilegio) | POL-05.2 | Sí |
+| 13 | **Cobranzas quiere usar el historial de ubicaciones**: otra finalidad que el cliente no autorizó | A | Ley 29733 | POL-15.1 | Sí |
 
 ## Caso 02 - API de constancias y estados de cuenta (basado en VAmPI)
 
-| # | Hallazgo esperado | Nivel | Referencia | POL | Seguridad |
+| # | Riesgo o requisito esperado | Nivel | Referencia | POL | Seguridad |
 |---|---|---|---|---|---|
-| 1 | /_debug expone todos los campos, incluidas contraseñas | B | API3, A02 | POL-09.2, POL-09.1 | Sí |
-| 2 | Contraseñas en texto plano | B | A04 | POL-10.1 | Sí |
-| 3 | Registro acepta "admin": true | B | API3, API5 | POL-01.5 | Sí |
-| 4 | DNI de la URL concatenado en la consulta | B | A05 (SQL injection) | POL-07.1 | Sí |
-| 5 | Cambio de contraseña solo pide estar logueado, no valida que sea su usuario | B | API1, A01 | POL-01.1, POL-03.1 | Sí |
-| 6 | Documentos descargables con cualquier token (no valida dueño) | B | API1 | POL-01.1 | Sí |
-| 7 | Mensajes de login distintos permiten enumerar usuarios | B | A07 | POL-02.5 | |
-| 8 | Regex de email copiada: riesgo de ReDoS | B | API4 | POL-07.4 | |
-| 9 | JWT HS256 con clave corta en el código; expiración alta | B | API2, A04 | POL-04.3, POL-04.1 | |
-| 10 | /clientes/v1 público lista emails | B | API3 | POL-09.1 | |
-| 11 | /createdb sin autenticación borra la base | B | API5, A01 | POL-09.2 | |
-| 12 | Login propio fuera del login central del banco | B | A07, SBS 504 (autenticación) | POL-02.1 | Sí |
-| 13 | **Token de servicio fijo, sin vencimiento y con acceso a todos los clientes**: si se filtra, expone los documentos de todo el banco | A | API2, API5, A01 | POL-05.3 | Sí |
-| 14 | **Confianza en el header X-Cliente-DNI**: cualquiera con el token pide documentos de otro DNI; la API no verifica la identidad del cliente final | A | API1, A01 | POL-05.4 | Sí |
-| 15 | **Links de PDF sin vencimiento y reenviables**: estados de cuenta accesibles para cualquiera que tenga el link | A | A01, API3 | POL-15.3, POL-15.4 | Sí |
-| 16 | **Copia de producción sin enmascarar en QA, accesible para un proveedor externo** | A | A02, SBS 504 (proveedores), protección de datos | POL-12.1, POL-12.3 | Sí |
-| 17 | **Request y response completos en una herramienta de logs en la nube**: DNI y datos financieros fuera del banco | A | A09, protección de datos | POL-14.2, POL-13.4 | Sí |
-| 18 | Sin rate limit, gateway sin configurar | B | API4, API8 | POL-09.6 | |
+| 1 | Registro y login propios fuera del login central del banco, aunque sea temporal | B | A07, SBS 504 (autenticación) | POL-02.1 | Sí |
+| 2 | Documentos financieros: cada descarga debe validar que el documento sea del cliente | B | API1, A01 | POL-01.1 | Sí |
+| 3 | Copia de producción sin enmascarar en QA | B | A02, Ley 29733 | POL-12.1 | Sí |
+| 4 | Logs con peticiones y respuestas completas (DNI y datos financieros) | B | A09, Ley 29733 | POL-14.2 | |
+| 5 | Documentos financieros en un bucket: cifrado en reposo con claves del banco | B | A04 | POL-10.2 | |
+| 6 | Publicación hacia la app: API Gateway con límite de solicitudes (no se menciona: preguntar) | B | API4, API8 | POL-09.6 | |
+| 7 | **La identidad del cliente llega como un DNI enviado por Banca Móvil**: la API confía en otro sistema; debe viajar en un token del IAM | A | API1, A01 | POL-05.4 | Sí |
+| 8 | **Credencial de servicio de Banca Móvil**: vencimiento y alcance limitado; hoy da acceso a cualquier cliente | A | API2, API5 | POL-05.3 | Sí |
+| 9 | **Link del PDF para compartir con terceros**: enlaces firmados que venzan en 24 horas y compartir con registro | A | A01, API3 | POL-15.3, POL-15.4 | Sí |
+| 10 | **Fábrica de software con acceso a QA con datos reales**: contrato, cuentas nominales y registro de accesos | A | SBS 504 (proveedores) | POL-12.3, POL-13.1 | Sí |
+| 11 | **Herramienta de logs en la nube con datos de clientes**: evaluación del servicio y de la ubicación de los datos | A | SBS 504 (nube) | POL-13.4 | Sí |
 
 ## Caso 03 - Tienda Puntos Andesur (basado en OWASP Juice Shop)
 
-| # | Hallazgo esperado | Nivel | Referencia | POL | Seguridad |
+| # | Riesgo o requisito esperado | Nivel | Referencia | POL | Seguridad |
 |---|---|---|---|---|---|
-| 1 | Búsqueda usada en SQL y reflejada en la página (SQLi y XSS) | B | A05 | POL-07.1, POL-07.7 | Sí |
-| 2 | JWT en localStorage (robable con XSS) | B | A07 | POL-04.4 | |
-| 3 | Contraseñas con MD5 | B | A04 | POL-10.1 | Sí |
-| 4 | Recuperación solo con pregunta de seguridad | B | A07, SBS 504 (autenticación) | POL-02.4 | |
-| 5 | Admin protegido solo ocultando el menú | B | A01 | POL-01.4 | Sí |
-| 6 | Carrito por ID sin validar dueño | B | API1, A01 | POL-01.1 | |
-| 7 | Edición de reseñas por ID sin validar autor (posible NoSQL injection) | B | A01, A05 | POL-01.1, POL-07.1 | |
-| 8 | Validación de archivos solo en el front | B | A06 | POL-07.5 | |
-| 9 | Parseo de XML de empresas (XXE) | B | A02 | POL-07.3 | Sí |
-| 10 | Foto por URL descargada por el servidor | B | A01 (SSRF) | POL-08.1, POL-08.2 | |
-| 11 | /archivos (contratos y backups), /metrics, /api-docs y /soporte/logs públicos | B | A01, A02 | POL-09.4, POL-09.3, POL-14.3 | Sí |
-| 12 | Lista blanca de redirect validada con "contiene" (open redirect, útil para phishing con dominio del banco) | B | A01 | POL-08.3 | |
-| 13 | Errores con detalle visible al usuario | B | A10 | POL-14.4 | |
-| 14 | **Condición de carrera en el canje**: consultar, registrar y descontar por separado permite canjear dos veces con el mismo saldo (lo confirma la prueba de carga) | A | API6, A06 | POL-06.3 | Sí |
-| 15 | **Límite diario de canje validado solo en el front** | A | API6, A06 | POL-06.4 | |
-| 16 | **Webhook de la pasarela sin firma**: cualquiera puede marcar una orden como pagada | A | A08, API10 | POL-08.4 | Sí |
-| 17 | **Número completo de tarjeta guardado en SQLite** en vez de tokenizar: todo el sistema entra en alcance PCI | A | PCI DSS, A04 | POL-11.1, POL-11.4 | Sí |
-| 18 | **Body de cada request (con datos de tarjeta y DNI) enviado a una SaaS de monitoreo** | A | PCI DSS, A09, protección de datos | POL-11.3, POL-14.2, POL-13.4 | Sí |
-| 19 | **Datos de clientes en us-east-1**: transferencia fuera del país sin evaluación | A | SBS 504 (nube/proveedores), protección de datos | POL-13.4 | Sí |
-| 20 | **Versión anterior de la tienda activa hasta marzo**: inventario de APIs y superficie duplicada | A | API9 | POL-09.5 | |
-| 21 | Sin alertas de seguridad; una sola instancia | B | A09 | POL-14.5, POL-14.1 | |
+| 1 | Usuario y contraseña propios de la tienda, fuera del login central del banco | B | A07, SBS 504 (autenticación) | POL-02.1 | Sí |
+| 2 | Recuperación de contraseña con pregunta de seguridad | B | A07 | POL-02.4 | Sí |
+| 3 | Opciones de administración según el rol en la misma web: el servidor debe validar el rol, no solo ocultar opciones | B | API5, A01 | POL-01.4 | Sí |
+| 4 | Catálogo en XML subido por las empresas: entidades externas deshabilitadas (XXE) | B | A05 | POL-07.3 | |
+| 5 | Imagen descargada desde una URL que indica la empresa (SSRF) | B | API7, A01 | POL-08.1, POL-08.2 | |
+| 6 | Tienda actual en paralelo hasta marzo: inventario, apagado y mismos controles | B | API9 | POL-09.5 | |
+| 7 | Usuario de cada empresa con convenio: credenciales propias y revocables, tercero evaluado | B | API10 | POL-13.3, POL-13.1 | |
+| 8 | **Canje en dos pasos (consultar saldo y luego descontar)**: dos canjes simultáneos usan el mismo saldo | A | API6, A06 | POL-06.3 | Sí |
+| 9 | **Límite diario de canje validado en la app**: debe validarse en el servidor | A | API6, A06 | POL-06.4 | Sí |
+| 10 | **Webhook de la pasarela confirma pagos**: sin firma, cualquiera puede marcar una orden como pagada | A | A08, API10 | POL-08.4 | Sí |
+| 11 | **Se guarda la tarjeta del cliente**: usar tokenización; si no, todo entra en alcance PCI | A | PCI DSS, A04 | POL-11.1, POL-11.4 | Sí |
+| 12 | **El SaaS de monitoreo registra peticiones**: puede recibir datos de tarjeta y DNI | A | PCI DSS, A09 | POL-11.3, POL-14.2 | Sí |
+| 13 | **Nube en us-east-1**: datos de clientes fuera del país sin evaluación | A | SBS 504 (nube), Ley 29733 | POL-13.4 | Sí |
 
 ## Resumen para la PPT
 
 | Caso | Básicos | Avanzados | Total | Para Seguridad |
 |---|---|---|---|---|
-| 01 AutoConecta | 15 | 6 | 21 | 10 |
-| 02 Constancias | 13 | 5 | 18 | 12 |
-| 03 Tienda Puntos | 14 | 7 | 21 | 10 |
+| 01 AutoConecta | 8 | 5 | 13 | 8 |
+| 02 Constancias | 6 | 5 | 11 | 8 |
+| 03 Tienda Puntos | 7 | 6 | 13 | 9 |
+| **Total** | **21** | **16** | **37** | **25** |
 
-## Casos trampa (pendientes)
-- Arquitectura bien diseñada: el bot no debería inventar hallazgos graves.
-- Caso con nombre de proyecto confidencial: debe bloquearse antes de llamar al modelo.
-- Caso con "enfoque estratégico" en el texto: ídem.
+## Casos trampa
+
+Ver `trampa_01` a `trampa_05` y `escenarios.json`: arquitectura bien diseñada (sin riesgos de severidad alta), proyecto confidencial y "enfoque estratégico" (se bloquean antes del modelo), instrucción escondida para que el bot apruebe (inyección) y datos sensibles pegados en la solicitud (se enmascaran).

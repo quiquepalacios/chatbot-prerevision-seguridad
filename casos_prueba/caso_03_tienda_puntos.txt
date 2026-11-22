@@ -1,76 +1,29 @@
-BANCO ANDESUR - SOLICITUD DE REVISION DE SEGURIDAD DE ARQUITECTURA
-(llenar todos los campos, si no aplica poner N/A)
+FORMULARIO DE SOLICITUD DE REVISIÓN DE ARQUITECTURA
 
-Nombre de la iniciativa: Tienda Puntos Andesur (nueva version)
-Area solicitante: Tribu Beneficios - squad Canje
-Rol del solicitante: Lider tecnico
-Fecha estimada de salida a produccion: Por confirmar. Si llegamos, para Black Friday
+1. Solución: Tienda Puntos Andesur (renovación)
+   Squad: Lealtad · Fecha de salida: 15 de marzo de 2027
+   Tipo: renovación de un sistema existente
 
-1. Descripcion breve de la solucion
-Tienda web donde los clientes con tarjeta Andesur canjean sus puntos por productos (electro, viajes, gift cards). Si no les alcanzan los puntos pueden completar con tarjeta. Tambien hay reseñas de productos, reclamos y un chatbot de atencion. Las empresas con convenio pueden hacer canjes masivos para sus trabajadores.
+2. Objetivo de negocio:
+   Que los clientes canjeen los puntos de su tarjeta por productos y, si no les alcanzan los puntos, completen el pago con su tarjeta. Las empresas con convenio publican sus productos en la tienda.
 
-2. Tipos de usuario
-Invitado (solo ve el catalogo), cliente, administrador (gestiona catalogo, usuarios y reseñas), operaciones (ve las ordenes) y empresa con convenio.
+3. Usuarios: clientes (web y app), administradores del catálogo (equipo de Lealtad), operaciones (ven las órdenes) y empresas con convenio.
 
-3. Tecnologias
-Front: Angular (SPA).
-Back: Node.js + Express.
-BD: SQLite con Sequelize para usuarios, productos y carrito. MarsDB (tipo Mongo, en memoria) para reseñas y ordenes.
-Todo en un solo contenedor Docker.
-Saldo de puntos: lo consultamos y descontamos en el sistema de Lealtad (otra area) por API.
+4. Componentes principales: front web, backend en Node.js, base de datos propia y almacenamiento de imágenes de productos.
 
-4. ¿Como se autentican los usuarios?
-Email y contraseña, o login con Google. Se genera un JWT (RS256) que se guarda en localStorage y en una cookie. 2FA con app autenticadora es opcional.
-Recuperacion de contraseña: pregunta de seguridad (ej. "¿nombre de tu primera mascota?").
-Contraseñas con MD5.
+5. Integraciones:
+   - Pasarela de pagos externa: confirma los pagos con tarjeta enviando una notificación (webhook) a la tienda.
+   - Sistema de Lealtad: la tienda consulta el saldo de puntos del cliente y luego le descuenta los puntos del canje.
+   - Empresas con convenio: suben su catálogo en un archivo XML y pueden indicar la URL de la imagen de cada producto, que la tienda descarga.
 
-5. ¿Como se controla lo que puede hacer cada usuario?
-El rol va en el JWT. La seccion de administracion (/#/administration) no aparece en el menu si no eres admin. La API revisa que venga un token valido.
-Carrito: GET /rest/carrito/{id}.
-Reseñas: PATCH /rest/productos/resenas enviando el id de la reseña y el texto nuevo.
-Limite de canje: maximo 50,000 puntos por dia. Lo valida el front antes de mandar la orden.
+6. Datos que maneja: nombre, DNI y email del cliente, puntos y órdenes. Para que las compras siguientes sean más rápidas, se guarda la tarjeta del cliente.
 
-6. Flujo de canje
-a) El cliente confirma el canje.
-b) El back consulta el saldo en Lealtad.
-c) Si alcanza, registra la orden.
-d) Llama a Lealtad para descontar los puntos.
-Los pasos b, c y d no estan en una transaccion porque Lealtad es otro sistema. En las pruebas de carga vimos algunas ordenes con descuento de puntos menor al esperado, lo estamos revisando.
+7. Autenticación y accesos: los clientes ingresan con el usuario y contraseña de la tienda (se mantiene el de la versión actual); si la olvidan, la recuperan respondiendo su pregunta de seguridad. Los administradores entran por la misma web y ven las opciones de administración según su rol. Cada empresa con convenio tiene un usuario para subir su catálogo.
 
-7. Pagos con tarjeta
-Pasarela de pagos externa. Cuando el pago se aprueba la pasarela nos llama a POST /api/pagos/notificacion y ahi marcamos la orden como pagada. Como esa URL no esta publicada en ningun lado no validamos firma.
-Tarjetas guardadas para compra rapida: guardamos numero completo y vencimiento en SQLite.
+8. Reglas de negocio: límite de canje de 50 000 puntos por día, que valida la app antes de enviar el canje.
 
-8. Datos que maneja la solucion
-Nombre, DNI, email, celular, direcciones de envio, tarjetas guardadas, saldo de puntos, historial de canjes y reseñas.
+9. Infraestructura y monitoreo: nube pública, región us-east-1. Un servicio SaaS de monitoreo registra las peticiones para analizar errores.
 
-9. Carga de archivos
-Si.
-- Reclamos: PDF o ZIP, max. 100 KB. Extension y tamaño validados en el front.
-- Canje masivo de empresas: suben un XML con la lista de trabajadores y productos, el back lo parsea.
-- Foto de perfil: archivo o URL; si es URL el servidor descarga la imagen.
+10. Transición: la tienda actual sigue funcionando en paralelo hasta marzo.
 
-10. Busqueda
-Barra de busqueda en el header. El texto se usa para filtrar productos en SQLite y se muestra como "Resultados para: <texto>".
-
-11. Endpoints o recursos publicos adicionales
-- /archivos: carpeta con contratos de proveedores y algunos backups de la BD, la usa marketing para compartir.
-- /metrics: Prometheus.
-- /api-docs: Swagger.
-- /soporte/logs: access logs, para que soporte los revise sin entrar al servidor.
-Todos sin login.
-
-12. Redirecciones
-/redirect?to=URL con lista blanca (paginas de aliados y de la campaña). La validacion revisa que la URL contenga alguno de los dominios permitidos.
-
-13. Manejo de errores
-N/A. Usamos el manejador por defecto de Express (en errores no controlados se ve la pagina con el detalle).
-
-14. Logs y monitoreo
-Access log a archivo (ver punto 11). Ademas enviamos los logs de la API, con el body de cada request, a una herramienta SaaS de monitoreo para ver errores en tiempo real. Prometheus + Grafana para metricas. Sin alertas de seguridad.
-
-15. Infraestructura
-AWS, una sola instancia EC2 detras de un balanceador con HTTPS. Region us-east-1.
-
-16. Comentarios adicionales
-Necesitamos la revision lo antes posible por la fecha de Black Friday. La version anterior de la tienda (la sigue usando el 10% de clientes) se apaga en marzo.
+11. Comentarios: ninguno.

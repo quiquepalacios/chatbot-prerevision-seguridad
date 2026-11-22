@@ -66,6 +66,8 @@
   .ins.baja{color:#fff;background:var(--ok);border-color:var(--ok)}
   .ins.sec{color:#fff;background:#6b3f8e;border-color:var(--sec)}
   .ins.nover{color:var(--warn);border-color:#6b5120}
+  .ins.conf{color:#c9cfdb;border-color:#5d6678}
+  .ins.aconf{color:#8db4ec;border-color:#2b4a75;border-style:dashed}
   .fuente{display:inline-block;font:11px ui-monospace,Consolas,monospace;padding:1px 6px;margin:2px 4px 0 0;
           border-radius:4px;background:#101318;border:1px solid #2b4a75;color:#8db4ec}
   .lista{margin:0;padding-left:18px;font-size:12.5px;color:#c9cfdb}
@@ -204,12 +206,15 @@ function tarjeta(h) {
   const fuentes = (h.fuentes || []).map(f => `<span class="fuente">${esc(f)}</span>`).join('');
   return `<div class="tarjeta ${esc(h.severidad)}">
     <div class="insignias"><span class="ins ${esc(h.severidad)}">${esc(h.severidad)}</span>
+      ${h.estado === 'confirmado' ? '<span class="ins conf" title="La solicitud lo dice explícitamente">confirmado</span>'
+        : '<span class="ins aconf" title="Se deduce de la solicitud: el equipo debe confirmarlo">a confirmar</span>'}
       ${h.requiere_seguridad ? '<span class="ins sec">va a Seguridad</span>' : ''}
       <span class="ins">${esc(h.nivel)}</span>
       ${h.fuente_recuperada === false ? '<span class="ins nover" title="La fuente no salió de una búsqueda de esta conversación">fuente no recuperada</span>' : ''}</div>
     <h3>${esc(h.titulo)}</h3>
     ${h.descripcion ? `<p><b>Qué pasa:</b> ${esc(h.descripcion)}</p>` : ''}
     ${h.recomendacion ? `<p><b>Recomendación:</b> ${esc(h.recomendacion)}</p>` : ''}
+    ${h.verificar ? `<p><b>Qué confirmar:</b> ${esc(h.verificar)}</p>` : ''}
     <div>${fuentes}</div></div>`;
 }
 
@@ -228,7 +233,8 @@ async function cargarRevision(id, rechazados) {
     caja.innerHTML = `
       <div class="resumen"><b>${esc(rev.id)}</b> · ${esc(rev.solucion)} · estado <b>${esc(rev.estado)}</b><br>
         ${hs.length} hallazgos: ${cuenta('alta')} altos · ${cuenta('media')} medios · ${cuenta('baja')} bajos ·
-        <b>${hs.filter(h => h.requiere_seguridad).length}</b> van a Seguridad</div>
+        <b>${hs.filter(h => h.requiere_seguridad).length}</b> van a Seguridad ·
+        <b>${hs.filter(h => h.estado !== 'confirmado').length}</b> a confirmar con el equipo</div>
       ${rev.resumen ? `<p class="resumen">${esc(rev.resumen)}</p>` : ''}
       <div class="acciones"><a class="boton" href="${base}.md${q}">descargar informe .md</a>
         <a class="boton" href="${base}.csv${q}">descargar .csv</a></div>
