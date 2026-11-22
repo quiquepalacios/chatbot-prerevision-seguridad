@@ -79,6 +79,11 @@ __all__ = [
 
 MODOS_HERRAMIENTAS = ("auto", "tools", "anthropic", "gemini", "prompt", "ninguno")
 NIVELES_RAZONAMIENTO = ("auto", "off", "low", "medium", "high")
+# Modelos de razonamiento de OpenAI (o1, o3, gpt-5…, gpt-6…): usan
+# max_completion_tokens y reasoning_effort, y rechazan una temperature distinta
+# de la de por defecto. Cambio respecto de la copia del curso: el original solo
+# reconocía o\d y gpt-5, así que gpt-6.x recibía max_tokens y temperature y fallaba.
+RE_RAZONAMIENTO_OPENAI = re.compile(r"^(o\d|gpt-[5-9])", re.IGNORECASE)
 ESTILOS_RAZONAMIENTO = (
     "auto", "none", "effort", "effort_obj", "thinking", "budget", "enable_thinking", "modelo",
 )
@@ -226,7 +231,7 @@ def _estilo_razonamiento(endpoint: Endpoint, familia: str) -> str:
         return "budget"
     if "reasoner" in modelo or "-r1" in modelo:
         return "modelo"
-    if re.match(r"^(o\d|gpt-5)", modelo):
+    if RE_RAZONAMIENTO_OPENAI.match(modelo):
         return "effort"
     if "qwen3" in modelo or "thinking" in modelo:
         return "enable_thinking"
@@ -583,9 +588,11 @@ class Router:
         cuerpo: dict[str, Any] = {
             "model": modelo,
             "messages": list(mensajes),
-            "temperature": temperature,
         }
-        usa_completion_tokens = bool(re.match(r"^(o\d|gpt-5)", modelo or ""))
+        usa_completion_tokens = bool(RE_RAZONAMIENTO_OPENAI.match(modelo or ""))
+        if not usa_completion_tokens:
+            # los modelos de razonamiento solo aceptan la temperatura por defecto
+            cuerpo["temperature"] = temperature
         cuerpo["max_completion_tokens" if usa_completion_tokens else "max_tokens"] = max_tokens
 
         if modo == "tools" and tools:

@@ -51,7 +51,7 @@ Si no hay modelo (sin clave, sin red o con el proveedor caído), el bot responde
 - Windows 10/11 (principal) o cualquier sistema con **Python 3.12 de 64 bits**.
 - Unos 3 GB libres: PyTorch, el modelo de embeddings (~200 MB) y la base vectorial.
 - Internet la primera vez: dependencias, fuentes OWASP/NIST y modelo de embeddings.
-- Una clave de API de **OpenAI** con un modelo de gama media o alta que soporte *function calling*. Sin clave, el bot funciona en modo demo.
+- Una clave de API de **OpenAI**. El modelo configurado es `gpt-6.2-sol` (gama media-alta, con razonamiento y *function calling*; unos USD 0,10-0,15 por revisión). Sin clave, el bot funciona en modo demo.
 
 ## Instalación y ejecución
 
@@ -63,7 +63,7 @@ cd andesur
 .\run.bat --tests        :: crea .venv con Python 3.12, instala requirements.txt, crea .env y corre las pruebas
 ```
 
-Edita `.env` y completa `LLM_API_KEY` y `LLM_MODEL` (ver [Configuración](#configuración-env)). Luego:
+Edita `.env` y completa `LLM_API_KEY`; el modelo ya viene configurado (ver [Configuración](#configuración-env)). Luego:
 
 ```bat
 .\run.bat --descargar    :: baja las fuentes OWASP y NIST (35 archivos, ~4 MB)
@@ -79,7 +79,7 @@ Usa `.\run.bat` (con `.\`): algunos equipos no ejecutan programas de la carpeta 
 python3.12 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env               # completa LLM_API_KEY y LLM_MODEL
+cp .env.example .env               # completa LLM_API_KEY
 python -m pytest                   # pruebas: sin red y sin clave
 python -m scripts.descargar_fuentes
 python -m scripts.indexar
@@ -109,9 +109,10 @@ Después hay que volver a correr `scripts.indexar`.
 |---|---|---|
 | `LLM_BASE_URL` | `https://api.openai.com/v1` | Endpoint del modelo |
 | `LLM_API_KEY` | *(vacío)* | Clave de OpenAI. Sin ella: modo demo |
-| `LLM_MODEL` | *(vacío)* | Nombre del modelo (gama media o alta, con *function calling*) |
-| `LLM_2_BASE_URL`, `LLM_2_API_KEY`, `LLM_2_MODEL` | — | Respaldo opcional si el principal falla |
-| `LLM_TEMPERATURA` / `LLM_MAX_TOKENS` | `0.2` / `4000` | Una revisión con ~20 hallazgos en JSON ocupa ~3000 tokens |
+| `LLM_MODEL` | `gpt-6.2-sol` | Modelo de OpenAI de gama media-alta, con razonamiento y *function calling* en Chat Completions. Alternativa más capaz y cara: `gpt-6.2-astra` |
+| `LLM_REASONING` | `auto` (= medium) | Nivel de razonamiento: `low` responde más rápido; `medium` razona mejor los riesgos avanzados |
+| `LLM_2_BASE_URL`, `LLM_2_API_KEY`, `LLM_2_MODEL` | — | Respaldo opcional si el principal falla (recomendado: `gpt-5.4-mini`) |
+| `LLM_TEMPERATURA` / `LLM_MAX_TOKENS` | `0.2` / `16000` | La temperatura solo la usan los modelos sin razonamiento. En los de razonamiento, el límite de salida incluye lo que el modelo piensa |
 | `RAG_UMBRAL` | `0.79` | Similitud mínima. Calibrada con `conocimiento/preguntas_control.json` |
 | `RAG_K_INICIAL` / `RAG_K_FINAL` / `RAG_MMR_LAMBDA` | `8` / `3` / `0.5` | Top-k → MMR → fragmentos al prompt |
 | `CHUNK_MAX_PALABRAS` / `CHUNK_OVERLAP_PALABRAS` | `150` / `25` | Tamaño y solape de los fragmentos |

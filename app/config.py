@@ -102,8 +102,9 @@ MAX_VUELTAS = _ent("MAX_VUELTAS", 6)          # rondas de herramientas por turno
 # límite es mayor que el del chat de la tienda (2000).
 LIMITE_MENSAJE = _ent("LIMITE_MENSAJE", 12000)
 LLM_TEMPERATURA = _num("LLM_TEMPERATURA", 0.2)
-# registrar_revision con ~20 hallazgos en JSON ocupa ~3000 tokens de salida
-LLM_MAX_TOKENS = _ent("LLM_MAX_TOKENS", 4000)
+# registrar_revision con ~20 hallazgos en JSON ocupa ~3000 tokens de salida y, en los
+# modelos de razonamiento (gpt-5.x, gpt-6.x), el límite incluye lo que el modelo piensa
+LLM_MAX_TOKENS = _ent("LLM_MAX_TOKENS", 16000)
 RETENCION_DIAS = _ent("DB_RETENCION_DIAS", 90)
 
 # -- logs ----------------------------------------------------------------------
