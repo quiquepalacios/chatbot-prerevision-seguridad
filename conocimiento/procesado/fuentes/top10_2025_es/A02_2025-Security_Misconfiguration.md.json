@@ -1,0 +1,35 @@
+{
+ "version_formato": 1,
+ "original": "fuentes/top10_2025_es/A02_2025-Security_Misconfiguration.md",
+ "sha256_original": "ba0af4ce4b69b5eac5f35e86f27dade606677116e21b52609d776a79cb7159a3",
+ "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+ "procesado": "2026-11-22T08:16:02",
+ "fuente": "A02:2025",
+ "titulo": "A02:2025 Configuración de Seguridad Incorrecta (Security Misconfiguration)",
+ "tipo": "owasp",
+ "formato": "md",
+ "palabras": 790,
+ "limpieza": {
+  "etiquetas_html": 42,
+  "imagenes": 1,
+  "secciones_omitidas": 3
+ },
+ "bloques": [
+  {
+   "texto": "Subiendo desde el #5 en la edición anterior, se encontró que el 100% de las aplicaciones probadas tenían alguna forma de desconfiguración, con una tasa de incidencia promedio del 3.00% y más de 719k ocurrencias de CWE (Common Weakness Enumeration) (enumeración de Debilidades Comunes) en esta categoría de riesgo. Con el aumento del software altamente configurable, no es sorprendente ver que esta categoría ascienda. Los CWE notables incluidos son *CWE-16: Configuración* y *CWE-611: Restricción Inadecuada de Referencias a Entidades Externas XML (XML External Entity, XXE)*.",
+   "seccion": "A02:2025 Configuración de Seguridad Incorrecta (Security Misconfiguration) > Antecedentes"
+  },
+  {
+   "texto": "La configuración de seguridad incorrecta ocurre cuando un sistema, aplicación o servicio en la nube se configura incorrectamente desde una perspectiva de seguridad, creando vulnerabilidades. La aplicación podría ser vulnerable si: * Carece de un bastionado (hardening) de seguridad adecuado en cualquier parte de la pila de la aplicación o tiene permisos configurados incorrectamente en los servicios en la nube. * Hay funciones innecesarias habilitadas o instaladas (por ejemplo, puertos, servicios, páginas, cuentas, marcos de prueba o privilegios innecesarios). * Las cuentas predeterminadas y sus contraseñas siguen habilitadas y sin cambios. * Falta una configuración central para interceptar mensajes de error excesivos. El manejo de errores revela trazas de la pila (stack traces) u otros mensajes de error demasiado informativos a los usuarios. * Para los sistemas actualizados, las últimas funciones de seguridad están desactivadas o no están configuradas de forma segura. * Existe una priorización excesiva de la compatibilidad hacia atrás que conduce a una configuración insegura. * Los ajustes de seguridad en los servidores de aplicaciones, frameworks de aplicaciones (por ejemplo, Struts, Spring, ASP.NET), bibliotecas, bases de datos, etc., no están establecidos en valores seguros. * El servidor no envía cabeceras o directivas de seguridad, o estas no están establecidas en valores seguros. Sin un proceso de bastionado (hardening) de la configuración de seguridad de las aplicaciones que sea concertado y repetible, los sistemas corren un mayor riesgo.",
+   "seccion": "A02:2025 Configuración de Seguridad Incorrecta (Security Misconfiguration) > Descripción"
+  },
+  {
+   "texto": "Deben implementarse procesos de instalación seguros, que incluyan: * Un proceso de bastionado (hardening) repetible que permita el despliegue rápido y sencillo de otro entorno que esté bloqueado adecuadamente. Los entornos de desarrollo, QA y producción deben estar configurados de forma idéntica, con credenciales diferentes en cada uno. Este proceso debe estar automatizado para minimizar el esfuerzo requerido para configurar un nuevo entorno seguro. * Una plataforma mínima sin funciones, componentes, documentación o ejemplos innecesarios. Elimine o no instale funciones y frameworks que no utilice. * Una tarea para revisar y actualizar las configuraciones de acuerdo con todas las notas de seguridad, actualizaciones y parches como parte del proceso de gestión de parches (consulte A03 Fallas en la Cadena de Suministro de Software). Revise los permisos de almacenamiento en la nube (por ejemplo, los permisos de los buckets S3). * Una arquitectura de aplicación segmentada que proporcione una separación efectiva y segura entre componentes o inquilinos (tenants), con segmentación, contenedorización o grupos de seguridad en la nube (ACLs). * Envío de directivas de seguridad a los clientes, por ejemplo, Cabeceras de Seguridad (Security Headers). * Un proceso automatizado para verificar la eficacia de las configuraciones y ajustes en todos los entornos. * Añadir proactivamente una configuración central para interceptar mensajes de error excesivos como medida de respaldo. * Si estas verificaciones no están automatizadas, deben verificarse manualmente al menos una vez al año. * Utilizar federación de identidades, credenciales de corta duración o mecanismos de acceso basados en roles proporcionados por la plataforma subyacente en lugar de incrustar claves estáticas o secretos en el código, los archivos de configuración o los flujos de trabajo (pipelines).",
+   "seccion": "A02:2025 Configuración de Seguridad Incorrecta (Security Misconfiguration) > Cómo prevenir"
+  },
+  {
+   "texto": "Escenario #1: El servidor de aplicaciones viene con aplicaciones de ejemplo que no se eliminaron del servidor de producción. Estas aplicaciones de ejemplo tienen fallas de seguridad conocidas que los atacantes utilizan para comprometer el servidor. Supongamos que una de estas aplicaciones es la consola de administración y las cuentas predeterminadas no se cambiaron. En ese caso, el atacante inicia sesión con la contraseña predeterminada y toma el control. Escenario #2: El listado de directorios no está desactivado en el servidor. Un atacante descubre que puede simplemente listar los directorios. El atacante encuentra y descarga las clases Java compiladas, las cuales descompila y les aplica ingeniería inversa para ver el código. El atacante encuentra entonces una falla grave de control de acceso en la aplicación. Escenario #3: La configuración del servidor de aplicaciones permite que se devuelvan mensajes de error detallados, como trazas de la pila, a los usuarios. Esto expone potencialmente información sensible o fallas subyacentes, como versiones de componentes que se sabe que son vulnerables. Escenario #4: Un proveedor de servicios en la nube (CSP) tiene por defecto permisos de compartición abiertos a Internet. Esto permite el acceso a datos sensibles almacenados en el almacenamiento en la nube.",
+   "seccion": "A02:2025 Configuración de Seguridad Incorrecta (Security Misconfiguration) > Escenarios de ejemplo de ataque"
+  }
+ ]
+}

@@ -1,0 +1,964 @@
+{
+ "version_formato": 1,
+ "original": "lineamientos/politicas_seguridad_banco_andesur.md",
+ "sha256_original": "c715e0b96118bdff62a7a6991af61a1f20aa2419a2cf96aeb33bf3704eb99f13",
+ "licencia": "Documento ficticio del proyecto (Banco Andesur)",
+ "procesado": "2026-11-22T08:16:02",
+ "fuente": "LSA-2026",
+ "titulo": "Banco Andesur - Lineamientos de Seguridad para Arquitecturas de Aplicaciones y APIs",
+ "tipo": "lineamiento",
+ "formato": "md",
+ "palabras": 2266,
+ "limpieza": {},
+ "bloques": [
+  {
+   "texto": "POL-01.1 (POL-01 Autorización de acceso a recursos y funciones): Todo endpoint que reciba un identificador de recurso (cuenta, tarjeta, vehículo, documento, orden, carrito, reporte) debe validar en el servidor que el recurso pertenece al usuario autenticado o que su rol le permite acceder.",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-01.2 (POL-01 Autorización de acceso a recursos y funciones): Usar identificadores aleatorios (UUID) o difíciles de adivinar no reemplaza la validación de la regla POL-01.1. Se considera que todo identificador puede filtrarse.",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-01.3 (POL-01 Autorización de acceso a recursos y funciones): No se deben usar identificadores correlativos expuestos al cliente para recursos con datos personales o financieros.",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-01.4 (POL-01 Autorización de acceso a recursos y funciones): Las funciones administrativas, de soporte o de backoffice deben validar el rol en el servidor. Ocultar una opción en el menú o en el front no es un control de seguridad.",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-01.5 (POL-01 Autorización de acceso a recursos y funciones): El rol o los permisos de un usuario no deben poder asignarse desde datos enviados por el propio usuario (por ejemplo, un campo admin o rol en el registro).",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-01.6 (POL-01 Autorización de acceso a recursos y funciones): Los permisos se otorgan por defecto denegados: lo que no está explícitamente permitido está prohibido.",
+   "seccion": "POL-01 Autorización de acceso a recursos y funciones",
+   "cita": "POL-01.6",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-01",
+    "titulo_politica": "Autorización de acceso a recursos y funciones",
+    "revision_obligatoria": "endpoints que expongan datos de cuentas, tarjetas, documentos financieros o ubicación del cliente; cualquier función administrativa.",
+    "referencias": "OWASP API1:2023 (BOLA), API5:2023 (BFLA), OWASP A01:2025, ASVS 5.0 capítulo V8 (Autorización).",
+    "objetivo": "que cada cliente o usuario interno solo pueda ver y operar sus propios recursos y las funciones de su rol."
+   }
+  },
+  {
+   "texto": "POL-02.1 (POL-02 Autenticación de clientes): Toda solución para clientes debe usar el servicio de autenticación central del banco (IAM corporativo). No se permiten registros ni logins propios por aplicación, ni siquiera de forma temporal.",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-02.2 (POL-02 Autenticación de clientes): Los códigos OTP deben tener al menos 6 dígitos, vencer en un máximo de 5 minutos y bloquearse tras 5 intentos fallidos.",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-02.3 (POL-02 Autenticación de clientes): Toda versión de un endpoint de autenticación o recuperación debe tener los mismos controles. Una versión anterior sin límite de intentos debe apagarse antes de publicar la nueva.",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-02.4 (POL-02 Autenticación de clientes): La recuperación de contraseña no debe depender de preguntas de seguridad. Debe usar un factor de posesión registrado (app del banco o dispositivo enrolado).",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-02.5 (POL-02 Autenticación de clientes): Los mensajes de error de login deben ser genéricos (\"usuario o contraseña incorrectos\") para no revelar si un usuario existe.",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-02.6 (POL-02 Autenticación de clientes): Todo endpoint de login, OTP o recuperación debe tener límite de intentos por usuario, por dispositivo y por IP.",
+   "seccion": "POL-02 Autenticación de clientes",
+   "cita": "POL-02.6",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-02",
+    "titulo_politica": "Autenticación de clientes",
+    "revision_obligatoria": "cualquier flujo de autenticación o recuperación que no use el IAM corporativo.",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulo V6 (Autenticación), Reglamento SBS 504-2021 (requisitos de autenticación).",
+    "objetivo": "asegurar que solo el titular accede a su cuenta."
+   }
+  },
+  {
+   "texto": "POL-03.1 (POL-03 Autenticación reforzada para operaciones sensibles): Requieren un segundo factor en el momento de la operación, aunque el cliente ya haya iniciado sesión: transferencias y abonos a terceros, alta de beneficiarios, cambio de celular o email, aumento de límites, canjes por encima del umbral definido por Riesgos y cambio de contraseña.",
+   "seccion": "POL-03 Autenticación reforzada para operaciones sensibles",
+   "cita": "POL-03.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-03",
+    "titulo_politica": "Autenticación reforzada para operaciones sensibles",
+    "revision_obligatoria": "todo flujo nuevo que mueva dinero o puntos, o que cambie datos de contacto del cliente.",
+    "referencias": "Reglamento SBS 504-2021 (autenticación), OWASP API6:2023, ASVS 5.0 capítulo V6.",
+    "objetivo": "proteger las operaciones que mueven dinero o permiten tomar control de la cuenta."
+   }
+  },
+  {
+   "texto": "POL-03.2 (POL-03 Autenticación reforzada para operaciones sensibles): El cambio de número celular debe validarse por un canal distinto al número nuevo y notificarse al número anterior.",
+   "seccion": "POL-03 Autenticación reforzada para operaciones sensibles",
+   "cita": "POL-03.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-03",
+    "titulo_politica": "Autenticación reforzada para operaciones sensibles",
+    "revision_obligatoria": "todo flujo nuevo que mueva dinero o puntos, o que cambie datos de contacto del cliente.",
+    "referencias": "Reglamento SBS 504-2021 (autenticación), OWASP API6:2023, ASVS 5.0 capítulo V6.",
+    "objetivo": "proteger las operaciones que mueven dinero o permiten tomar control de la cuenta."
+   }
+  },
+  {
+   "texto": "POL-03.3 (POL-03 Autenticación reforzada para operaciones sensibles): El monto, la cuenta destino y el beneficiario que el cliente confirma deben ser exactamente los que se ejecutan. El servidor debe vincular el segundo factor a esos datos.",
+   "seccion": "POL-03 Autenticación reforzada para operaciones sensibles",
+   "cita": "POL-03.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-03",
+    "titulo_politica": "Autenticación reforzada para operaciones sensibles",
+    "revision_obligatoria": "todo flujo nuevo que mueva dinero o puntos, o que cambie datos de contacto del cliente.",
+    "referencias": "Reglamento SBS 504-2021 (autenticación), OWASP API6:2023, ASVS 5.0 capítulo V6.",
+    "objetivo": "proteger las operaciones que mueven dinero o permiten tomar control de la cuenta."
+   }
+  },
+  {
+   "texto": "POL-04.1 (POL-04 Tokens y sesiones): Los tokens de acceso deben durar como máximo 15 minutos. Las sesiones largas se mantienen con refresh tokens rotativos.",
+   "seccion": "POL-04 Tokens y sesiones",
+   "cita": "POL-04.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-04",
+    "titulo_politica": "Tokens y sesiones",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulos V7 (Sesiones) y V9 (Tokens autocontenidos).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-04.2 (POL-04 Tokens y sesiones): Debe existir un mecanismo para revocar tokens (cierre de sesión, cambio de contraseña, sospecha de fraude).",
+   "seccion": "POL-04 Tokens y sesiones",
+   "cita": "POL-04.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-04",
+    "titulo_politica": "Tokens y sesiones",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulos V7 (Sesiones) y V9 (Tokens autocontenidos).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-04.3 (POL-04 Tokens y sesiones): Los tokens deben firmarse con algoritmos asimétricos aprobados (RS256 o ES256) y claves custodiadas en el vault corporativo. Están prohibidas las claves cortas o escritas en el código.",
+   "seccion": "POL-04 Tokens y sesiones",
+   "cita": "POL-04.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-04",
+    "titulo_politica": "Tokens y sesiones",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulos V7 (Sesiones) y V9 (Tokens autocontenidos).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-04.4 (POL-04 Tokens y sesiones): En aplicaciones web, los tokens no deben guardarse en localStorage. Deben usarse cookies HttpOnly, Secure y SameSite.",
+   "seccion": "POL-04 Tokens y sesiones",
+   "cita": "POL-04.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-04",
+    "titulo_politica": "Tokens y sesiones",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulos V7 (Sesiones) y V9 (Tokens autocontenidos).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-04.5 (POL-04 Tokens y sesiones): La validación de tokens debe hacerse en el API Gateway corporativo o con la librería estándar del banco, no con implementaciones propias por servicio.",
+   "seccion": "POL-04 Tokens y sesiones",
+   "cita": "POL-04.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-04",
+    "titulo_politica": "Tokens y sesiones",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API2:2023, A07:2025, ASVS 5.0 capítulos V7 (Sesiones) y V9 (Tokens autocontenidos).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-05.1 (POL-05 Comunicación entre servicios y cuentas de servicio): Ningún servicio debe confiar en otro solo por estar en la red interna. Toda llamada entre servicios debe autenticarse (mTLS u OAuth client credentials).",
+   "seccion": "POL-05 Comunicación entre servicios y cuentas de servicio",
+   "cita": "POL-05.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-05",
+    "titulo_politica": "Comunicación entre servicios y cuentas de servicio",
+    "revision_obligatoria": "toda cuenta de servicio con acceso al core bancario o a datos de clientes.",
+    "referencias": "NIST SP 800-207 (Zero Trust), NIST SP 800-204, OWASP API2:2023, API5:2023, A01:2025.",
+    "objetivo": "aplicar mínimo privilegio y confianza cero entre sistemas internos."
+   }
+  },
+  {
+   "texto": "POL-05.2 (POL-05 Comunicación entre servicios y cuentas de servicio): Las cuentas de servicio deben tener solo los permisos que su función necesita. Está prohibido usar perfiles generales para \"avanzar más rápido\".",
+   "seccion": "POL-05 Comunicación entre servicios y cuentas de servicio",
+   "cita": "POL-05.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-05",
+    "titulo_politica": "Comunicación entre servicios y cuentas de servicio",
+    "revision_obligatoria": "toda cuenta de servicio con acceso al core bancario o a datos de clientes.",
+    "referencias": "NIST SP 800-207 (Zero Trust), NIST SP 800-204, OWASP API2:2023, API5:2023, A01:2025.",
+    "objetivo": "aplicar mínimo privilegio y confianza cero entre sistemas internos."
+   }
+  },
+  {
+   "texto": "POL-05.3 (POL-05 Comunicación entre servicios y cuentas de servicio): Los tokens de servicio deben tener vencimiento y alcance limitado. Están prohibidos los tokens fijos sin vencimiento.",
+   "seccion": "POL-05 Comunicación entre servicios y cuentas de servicio",
+   "cita": "POL-05.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-05",
+    "titulo_politica": "Comunicación entre servicios y cuentas de servicio",
+    "revision_obligatoria": "toda cuenta de servicio con acceso al core bancario o a datos de clientes.",
+    "referencias": "NIST SP 800-207 (Zero Trust), NIST SP 800-204, OWASP API2:2023, API5:2023, A01:2025.",
+    "objetivo": "aplicar mínimo privilegio y confianza cero entre sistemas internos."
+   }
+  },
+  {
+   "texto": "POL-05.4 (POL-05 Comunicación entre servicios y cuentas de servicio): Un servicio no debe aceptar la identidad del cliente final desde un header o parámetro enviado por otro sistema (por ejemplo, X-Cliente-DNI). La identidad del cliente debe viajar en un token emitido por el IAM y verificarse en cada servicio.",
+   "seccion": "POL-05 Comunicación entre servicios y cuentas de servicio",
+   "cita": "POL-05.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-05",
+    "titulo_politica": "Comunicación entre servicios y cuentas de servicio",
+    "revision_obligatoria": "toda cuenta de servicio con acceso al core bancario o a datos de clientes.",
+    "referencias": "NIST SP 800-207 (Zero Trust), NIST SP 800-204, OWASP API2:2023, API5:2023, A01:2025.",
+    "objetivo": "aplicar mínimo privilegio y confianza cero entre sistemas internos."
+   }
+  },
+  {
+   "texto": "POL-05.5 (POL-05 Comunicación entre servicios y cuentas de servicio): Cada servicio debe tener su propio usuario de base de datos, con acceso solo a su esquema.",
+   "seccion": "POL-05 Comunicación entre servicios y cuentas de servicio",
+   "cita": "POL-05.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-05",
+    "titulo_politica": "Comunicación entre servicios y cuentas de servicio",
+    "revision_obligatoria": "toda cuenta de servicio con acceso al core bancario o a datos de clientes.",
+    "referencias": "NIST SP 800-207 (Zero Trust), NIST SP 800-204, OWASP API2:2023, API5:2023, A01:2025.",
+    "objetivo": "aplicar mínimo privilegio y confianza cero entre sistemas internos."
+   }
+  },
+  {
+   "texto": "POL-06.1 (POL-06 Operaciones monetarias e integración con el core): El monto y la cuenta destino de un abono, devolución o transferencia deben obtenerse de registros del servidor, nunca de datos enviados por el cliente ni de campos editables de una orden.",
+   "seccion": "POL-06 Operaciones monetarias e integración con el core",
+   "cita": "POL-06.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-06",
+    "titulo_politica": "Operaciones monetarias e integración con el core",
+    "revision_obligatoria": "toda integración que escriba en el core bancario o en el sistema de Lealtad.",
+    "referencias": "OWASP API6:2023, API3:2023, A06:2025, ASVS 5.0 capítulo V2 (Validación y lógica de negocio).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-06.2 (POL-06 Operaciones monetarias e integración con el core): Toda operación que mueva dinero o puntos debe ser idempotente: debe llevar un identificador único de operación y el sistema destino debe rechazar duplicados. Un reintento por timeout no debe ejecutar la operación dos veces.",
+   "seccion": "POL-06 Operaciones monetarias e integración con el core",
+   "cita": "POL-06.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-06",
+    "titulo_politica": "Operaciones monetarias e integración con el core",
+    "revision_obligatoria": "toda integración que escriba en el core bancario o en el sistema de Lealtad.",
+    "referencias": "OWASP API6:2023, API3:2023, A06:2025, ASVS 5.0 capítulo V2 (Validación y lógica de negocio).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-06.3 (POL-06 Operaciones monetarias e integración con el core): Las operaciones de consulta de saldo, registro y descuento deben ejecutarse de forma atómica o con reserva de saldo, para evitar que dos solicitudes simultáneas usen el mismo saldo.",
+   "seccion": "POL-06 Operaciones monetarias e integración con el core",
+   "cita": "POL-06.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-06",
+    "titulo_politica": "Operaciones monetarias e integración con el core",
+    "revision_obligatoria": "toda integración que escriba en el core bancario o en el sistema de Lealtad.",
+    "referencias": "OWASP API6:2023, API3:2023, A06:2025, ASVS 5.0 capítulo V2 (Validación y lógica de negocio).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-06.4 (POL-06 Operaciones monetarias e integración con el core): Los límites de negocio (montos diarios, canjes, transferencias) deben validarse en el servidor. La validación en el front es solo para la experiencia de usuario.",
+   "seccion": "POL-06 Operaciones monetarias e integración con el core",
+   "cita": "POL-06.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-06",
+    "titulo_politica": "Operaciones monetarias e integración con el core",
+    "revision_obligatoria": "toda integración que escriba en el core bancario o en el sistema de Lealtad.",
+    "referencias": "OWASP API6:2023, API3:2023, A06:2025, ASVS 5.0 capítulo V2 (Validación y lógica de negocio).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-06.5 (POL-06 Operaciones monetarias e integración con el core): El estado de una orden u operación (por ejemplo, \"pagado\" o \"devuelto\") solo puede cambiarlo el sistema según su flujo, no un dato enviado por el cliente.",
+   "seccion": "POL-06 Operaciones monetarias e integración con el core",
+   "cita": "POL-06.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-06",
+    "titulo_politica": "Operaciones monetarias e integración con el core",
+    "revision_obligatoria": "toda integración que escriba en el core bancario o en el sistema de Lealtad.",
+    "referencias": "OWASP API6:2023, API3:2023, A06:2025, ASVS 5.0 capítulo V2 (Validación y lógica de negocio).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.1 (POL-07 Validación de entradas y archivos): Todas las consultas a bases de datos (SQL y NoSQL) deben usar consultas parametrizadas o el ORM sin concatenar datos del usuario.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.2 (POL-07 Validación de entradas y archivos): Las APIs deben aceptar solo los campos esperados (lista de campos permitidos). Los campos adicionales se rechazan.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.3 (POL-07 Validación de entradas y archivos): El procesamiento de XML debe tener deshabilitadas las entidades externas (XXE). Se prefiere JSON para integraciones nuevas.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.4 (POL-07 Validación de entradas y archivos): Las expresiones regulares para validar datos deben estar revisadas contra ReDoS. No se deben copiar expresiones de fuentes no verificadas.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.5 (POL-07 Validación de entradas y archivos): La validación de archivos subidos (tipo real, tamaño, contenido) debe hacerse en el servidor. Los archivos se guardan fuera del directorio web y se analizan con antimalware.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.6 (POL-07 Validación de entradas y archivos): Los parámetros que controlan procesos internos (formatos de conversión, número de reintentos, comandos) no deben recibirse del cliente. Si son necesarios, se eligen de una lista cerrada en el servidor y tienen tope.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.6",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-07.7 (POL-07 Validación de entradas y archivos): Toda salida que muestre datos ingresados por el usuario debe codificarse para evitar XSS.",
+   "seccion": "POL-07 Validación de entradas y archivos",
+   "cita": "POL-07.7",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-07",
+    "titulo_politica": "Validación de entradas y archivos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A05:2025 (Inyección), API3:2023, API4:2023, ASVS 5.0 capítulos V1 y V5.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-08.1 (POL-08 URLs externas, redirecciones y webhooks): El servidor no debe llamar a URLs enviadas por el usuario. Las URLs de aliados y proveedores se registran en una configuración controlada por el banco.",
+   "seccion": "POL-08 URLs externas, redirecciones y webhooks",
+   "cita": "POL-08.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-08",
+    "titulo_politica": "URLs externas, redirecciones y webhooks",
+    "revision_obligatoria": "todo webhook que cambie el estado de un pago u orden.",
+    "referencias": "OWASP API7:2023 (SSRF), API10:2023, A01:2025, A08:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-08.2 (POL-08 URLs externas, redirecciones y webhooks): Cuando sea indispensable descargar un recurso externo, debe usarse una lista blanca de dominios exactos y bloquear direcciones internas.",
+   "seccion": "POL-08 URLs externas, redirecciones y webhooks",
+   "cita": "POL-08.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-08",
+    "titulo_politica": "URLs externas, redirecciones y webhooks",
+    "revision_obligatoria": "todo webhook que cambie el estado de un pago u orden.",
+    "referencias": "OWASP API7:2023 (SSRF), API10:2023, A01:2025, A08:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-08.3 (POL-08 URLs externas, redirecciones y webhooks): Las redirecciones deben validar el dominio exacto contra una lista blanca. Está prohibido validar con \"contiene\".",
+   "seccion": "POL-08 URLs externas, redirecciones y webhooks",
+   "cita": "POL-08.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-08",
+    "titulo_politica": "URLs externas, redirecciones y webhooks",
+    "revision_obligatoria": "todo webhook que cambie el estado de un pago u orden.",
+    "referencias": "OWASP API7:2023 (SSRF), API10:2023, A01:2025, A08:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-08.4 (POL-08 URLs externas, redirecciones y webhooks): Todo webhook entrante (pasarelas de pago, proveedores GPS, aliados) debe validar la firma del mensaje, la marca de tiempo (anti-replay) y, cuando sea posible, la IP de origen. Que la URL \"no esté publicada\" no es un control.",
+   "seccion": "POL-08 URLs externas, redirecciones y webhooks",
+   "cita": "POL-08.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-08",
+    "titulo_politica": "URLs externas, redirecciones y webhooks",
+    "revision_obligatoria": "todo webhook que cambie el estado de un pago u orden.",
+    "referencias": "OWASP API7:2023 (SSRF), API10:2023, A01:2025, A08:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-08.5 (POL-08 URLs externas, redirecciones y webhooks): Las respuestas de terceros deben validarse como cualquier dato externo antes de usarse.",
+   "seccion": "POL-08 URLs externas, redirecciones y webhooks",
+   "cita": "POL-08.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-08",
+    "titulo_politica": "URLs externas, redirecciones y webhooks",
+    "revision_obligatoria": "todo webhook que cambie el estado de un pago u orden.",
+    "referencias": "OWASP API7:2023 (SSRF), API10:2023, A01:2025, A08:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.1 (POL-09 Exposición de datos e inventario de APIs): Las respuestas de API deben devolver solo los campos que el consumidor necesita. Está prohibido devolver objetos completos de clientes (DNI, email, identificadores internos) para que el front los filtre.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.2 (POL-09 Exposición de datos e inventario de APIs): Los endpoints de depuración, prueba o recreación de datos (por ejemplo _debug o createdb) no deben existir en producción.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.3 (POL-09 Exposición de datos e inventario de APIs): La documentación de APIs (Swagger), las métricas y los paneles internos no deben estar accesibles desde internet.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.4 (POL-09 Exposición de datos e inventario de APIs): Está prohibido publicar carpetas de archivos, backups o contratos en rutas web. Los archivos se comparten por las herramientas corporativas.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.5 (POL-09 Exposición de datos e inventario de APIs): Toda API debe estar registrada en el inventario corporativo con su versión. Al publicar una versión nueva, la anterior debe tener fecha de apagado no mayor a 90 días y los mismos controles de seguridad mientras siga activa.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-09.6 (POL-09 Exposición de datos e inventario de APIs): Toda API expuesta a internet debe publicarse a través del API Gateway corporativo con rate limiting configurado.",
+   "seccion": "POL-09 Exposición de datos e inventario de APIs",
+   "cita": "POL-09.6",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-09",
+    "titulo_politica": "Exposición de datos e inventario de APIs",
+    "revision_obligatoria": "",
+    "referencias": "OWASP API3:2023, API8:2023, API9:2023, API4:2023, A02:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-10.1 (POL-10 Contraseñas, cifrado y secretos): Las contraseñas solo pueden almacenarse con algoritmos aprobados para contraseñas (Argon2id o bcrypt). Están prohibidos el texto plano, MD5 y SHA sin sal.",
+   "seccion": "POL-10 Contraseñas, cifrado y secretos",
+   "cita": "POL-10.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-10",
+    "titulo_politica": "Contraseñas, cifrado y secretos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A04:2025 (Fallas criptográficas), ASVS 5.0 capítulos V11 (Criptografía) y V13 (Configuración).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-10.2 (POL-10 Contraseñas, cifrado y secretos): Los datos personales y financieros deben cifrarse en reposo con claves gestionadas por el banco.",
+   "seccion": "POL-10 Contraseñas, cifrado y secretos",
+   "cita": "POL-10.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-10",
+    "titulo_politica": "Contraseñas, cifrado y secretos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A04:2025 (Fallas criptográficas), ASVS 5.0 capítulos V11 (Criptografía) y V13 (Configuración).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-10.3 (POL-10 Contraseñas, cifrado y secretos): Los secretos (claves, contraseñas de BD, tokens) deben guardarse en el vault corporativo. Está prohibido guardarlos en el código, en archivos de configuración del repositorio o en docker-compose.",
+   "seccion": "POL-10 Contraseñas, cifrado y secretos",
+   "cita": "POL-10.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-10",
+    "titulo_politica": "Contraseñas, cifrado y secretos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A04:2025 (Fallas criptográficas), ASVS 5.0 capítulos V11 (Criptografía) y V13 (Configuración).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-10.4 (POL-10 Contraseñas, cifrado y secretos): Las comunicaciones deben usar TLS 1.2 o superior, también entre servicios internos.",
+   "seccion": "POL-10 Contraseñas, cifrado y secretos",
+   "cita": "POL-10.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-10",
+    "titulo_politica": "Contraseñas, cifrado y secretos",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A04:2025 (Fallas criptográficas), ASVS 5.0 capítulos V11 (Criptografía) y V13 (Configuración).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-11.1 (POL-11 Datos de tarjetas (PCI DSS)): Ninguna aplicación fuera del entorno PCI certificado del banco debe almacenar el número completo de tarjeta (PAN). Para compras recurrentes se usa el servicio de tokenización.",
+   "seccion": "POL-11 Datos de tarjetas (PCI DSS)",
+   "cita": "POL-11.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-11",
+    "titulo_politica": "Datos de tarjetas (PCI DSS)",
+    "revision_obligatoria": "toda solución que toque datos de tarjeta.",
+    "referencias": "PCI DSS v4.0 (requisitos 3 y 10), OWASP A04:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-11.2 (POL-11 Datos de tarjetas (PCI DSS)): El código de seguridad (CVV) nunca se almacena, ni siquiera cifrado.",
+   "seccion": "POL-11 Datos de tarjetas (PCI DSS)",
+   "cita": "POL-11.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-11",
+    "titulo_politica": "Datos de tarjetas (PCI DSS)",
+    "revision_obligatoria": "toda solución que toque datos de tarjeta.",
+    "referencias": "PCI DSS v4.0 (requisitos 3 y 10), OWASP A04:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-11.3 (POL-11 Datos de tarjetas (PCI DSS)): El PAN, el CVV y la fecha de vencimiento no deben aparecer en logs, trazas, mensajes de error ni herramientas de monitoreo.",
+   "seccion": "POL-11 Datos de tarjetas (PCI DSS)",
+   "cita": "POL-11.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-11",
+    "titulo_politica": "Datos de tarjetas (PCI DSS)",
+    "revision_obligatoria": "toda solución que toque datos de tarjeta.",
+    "referencias": "PCI DSS v4.0 (requisitos 3 y 10), OWASP A04:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-11.4 (POL-11 Datos de tarjetas (PCI DSS)): Una solución que almacene, procese o transmita datos de tarjeta entra en el alcance PCI y debe ser evaluada por Seguridad antes de su diseño detallado.",
+   "seccion": "POL-11 Datos de tarjetas (PCI DSS)",
+   "cita": "POL-11.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-11",
+    "titulo_politica": "Datos de tarjetas (PCI DSS)",
+    "revision_obligatoria": "toda solución que toque datos de tarjeta.",
+    "referencias": "PCI DSS v4.0 (requisitos 3 y 10), OWASP A04:2025.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-12.1 (POL-12 Datos en ambientes no productivos): Está prohibido usar datos reales de clientes en desarrollo, QA o certificación sin enmascarar o anonimizar.",
+   "seccion": "POL-12 Datos en ambientes no productivos",
+   "cita": "POL-12.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-12",
+    "titulo_politica": "Datos en ambientes no productivos",
+    "revision_obligatoria": "cualquier pedido de copia de datos de producción.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, NIST SP 800-218 (SSDF).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-12.2 (POL-12 Datos en ambientes no productivos): Los datos de prueba se generan de forma sintética o con el proceso corporativo de enmascaramiento.",
+   "seccion": "POL-12 Datos en ambientes no productivos",
+   "cita": "POL-12.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-12",
+    "titulo_politica": "Datos en ambientes no productivos",
+    "revision_obligatoria": "cualquier pedido de copia de datos de producción.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, NIST SP 800-218 (SSDF).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-12.3 (POL-12 Datos en ambientes no productivos): El acceso de proveedores externos a ambientes no productivos requiere contrato vigente, cuentas nominales y registro de accesos.",
+   "seccion": "POL-12 Datos en ambientes no productivos",
+   "cita": "POL-12.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-12",
+    "titulo_politica": "Datos en ambientes no productivos",
+    "revision_obligatoria": "cualquier pedido de copia de datos de producción.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, NIST SP 800-218 (SSDF).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-12.4 (POL-12 Datos en ambientes no productivos): Los ambientes no productivos no deben tener conectividad con sistemas productivos.",
+   "seccion": "POL-12 Datos en ambientes no productivos",
+   "cita": "POL-12.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-12",
+    "titulo_politica": "Datos en ambientes no productivos",
+    "revision_obligatoria": "cualquier pedido de copia de datos de producción.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, NIST SP 800-218 (SSDF).",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-13.1 (POL-13 Proveedores, terceros y nube): Todo tercero que reciba datos de clientes (talleres afiliados, comercios, fábricas de software, proveedores SaaS) debe pasar la evaluación de proveedores del banco y firmar cláusulas de protección de datos y seguridad, sin importar su tamaño o el volumen de datos.",
+   "seccion": "POL-13 Proveedores, terceros y nube",
+   "cita": "POL-13.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-13",
+    "titulo_politica": "Proveedores, terceros y nube",
+    "revision_obligatoria": "todo nuevo tercero o servicio en la nube con acceso a datos de clientes.",
+    "referencias": "Reglamento SBS 504-2021 (proveedores y servicios en la nube), Ley N.° 29733, OWASP API10:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-13.2 (POL-13 Proveedores, terceros y nube): Al tercero solo se le envían los datos mínimos necesarios para su función (por ejemplo, un código de cita en vez de DNI y celular).",
+   "seccion": "POL-13 Proveedores, terceros y nube",
+   "cita": "POL-13.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-13",
+    "titulo_politica": "Proveedores, terceros y nube",
+    "revision_obligatoria": "todo nuevo tercero o servicio en la nube con acceso a datos de clientes.",
+    "referencias": "Reglamento SBS 504-2021 (proveedores y servicios en la nube), Ley N.° 29733, OWASP API10:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-13.3 (POL-13 Proveedores, terceros y nube): Las integraciones con terceros deben usar credenciales propias por tercero, revocables, y canales autenticados.",
+   "seccion": "POL-13 Proveedores, terceros y nube",
+   "cita": "POL-13.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-13",
+    "titulo_politica": "Proveedores, terceros y nube",
+    "revision_obligatoria": "todo nuevo tercero o servicio en la nube con acceso a datos de clientes.",
+    "referencias": "Reglamento SBS 504-2021 (proveedores y servicios en la nube), Ley N.° 29733, OWASP API10:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-13.4 (POL-13 Proveedores, terceros y nube): El uso de servicios en la nube o SaaS que almacenen o procesen datos de clientes requiere evaluación previa de Seguridad y de Riesgos, incluida la ubicación de los datos y la transferencia fuera del país.",
+   "seccion": "POL-13 Proveedores, terceros y nube",
+   "cita": "POL-13.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-13",
+    "titulo_politica": "Proveedores, terceros y nube",
+    "revision_obligatoria": "todo nuevo tercero o servicio en la nube con acceso a datos de clientes.",
+    "referencias": "Reglamento SBS 504-2021 (proveedores y servicios en la nube), Ley N.° 29733, OWASP API10:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-14.1 (POL-14 Registro, monitoreo y manejo de errores): Los eventos de seguridad (logins, fallos de autenticación, cambios de datos, operaciones monetarias, accesos denegados) deben registrarse y enviarse al SIEM corporativo.",
+   "seccion": "POL-14 Registro, monitoreo y manejo de errores",
+   "cita": "POL-14.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-14",
+    "titulo_politica": "Registro, monitoreo y manejo de errores",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A09:2025, A10:2025, ASVS 5.0 capítulo V16 (Registro y errores), PCI DSS requisito 10.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-14.2 (POL-14 Registro, monitoreo y manejo de errores): Los logs no deben contener contraseñas, tokens, datos de tarjeta ni cuerpos completos de solicitudes o respuestas con datos personales. Deben enmascarar DNI y números de cuenta.",
+   "seccion": "POL-14 Registro, monitoreo y manejo de errores",
+   "cita": "POL-14.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-14",
+    "titulo_politica": "Registro, monitoreo y manejo de errores",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A09:2025, A10:2025, ASVS 5.0 capítulo V16 (Registro y errores), PCI DSS requisito 10.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-14.3 (POL-14 Registro, monitoreo y manejo de errores): Los logs no deben ser accesibles por rutas web. Soporte accede a través de la herramienta corporativa de observabilidad.",
+   "seccion": "POL-14 Registro, monitoreo y manejo de errores",
+   "cita": "POL-14.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-14",
+    "titulo_politica": "Registro, monitoreo y manejo de errores",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A09:2025, A10:2025, ASVS 5.0 capítulo V16 (Registro y errores), PCI DSS requisito 10.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-14.4 (POL-14 Registro, monitoreo y manejo de errores): Los errores mostrados al usuario deben ser genéricos y con un código de referencia. El detalle técnico (stack trace, consultas) solo va al log interno.",
+   "seccion": "POL-14 Registro, monitoreo y manejo de errores",
+   "cita": "POL-14.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-14",
+    "titulo_politica": "Registro, monitoreo y manejo de errores",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A09:2025, A10:2025, ASVS 5.0 capítulo V16 (Registro y errores), PCI DSS requisito 10.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-14.5 (POL-14 Registro, monitoreo y manejo de errores): Toda solución debe definir alertas para patrones de abuso: intentos masivos de login u OTP, acceso a recursos de otros clientes y volumen anómalo de operaciones.",
+   "seccion": "POL-14 Registro, monitoreo y manejo de errores",
+   "cita": "POL-14.5",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-14",
+    "titulo_politica": "Registro, monitoreo y manejo de errores",
+    "revision_obligatoria": "",
+    "referencias": "OWASP A09:2025, A10:2025, ASVS 5.0 capítulo V16 (Registro y errores), PCI DSS requisito 10.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-15.1 (POL-15 Finalidad, retención y entrega de datos personales): Los datos personales solo pueden usarse para la finalidad informada al cliente. Usarlos para otra finalidad (por ejemplo, ubicación GPS para cobranzas) requiere evaluación legal y, cuando corresponda, consentimiento.",
+   "seccion": "POL-15 Finalidad, retención y entrega de datos personales",
+   "cita": "POL-15.1",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-15",
+    "titulo_politica": "Finalidad, retención y entrega de datos personales",
+    "revision_obligatoria": "uso de datos de ubicación, biométricos o financieros para una finalidad nueva.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, OWASP API3:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-15.2 (POL-15 Finalidad, retención y entrega de datos personales): Toda solución debe definir el plazo de retención de los datos que guarda y un proceso de borrado. Los datos de ubicación se conservan como máximo 90 días, salvo requerimiento legal.",
+   "seccion": "POL-15 Finalidad, retención y entrega de datos personales",
+   "cita": "POL-15.2",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-15",
+    "titulo_politica": "Finalidad, retención y entrega de datos personales",
+    "revision_obligatoria": "uso de datos de ubicación, biométricos o financieros para una finalidad nueva.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, OWASP API3:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-15.3 (POL-15 Finalidad, retención y entrega de datos personales): Los documentos con datos financieros (estados de cuenta, constancias) deben entregarse con enlaces firmados que venzan en un máximo de 24 horas y estén ligados al cliente.",
+   "seccion": "POL-15 Finalidad, retención y entrega de datos personales",
+   "cita": "POL-15.3",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-15",
+    "titulo_politica": "Finalidad, retención y entrega de datos personales",
+    "revision_obligatoria": "uso de datos de ubicación, biométricos o financieros para una finalidad nueva.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, OWASP API3:2023.",
+    "objetivo": ""
+   }
+  },
+  {
+   "texto": "POL-15.4 (POL-15 Finalidad, retención y entrega de datos personales): El cliente puede compartir un documento con terceros mediante una función que registre a quién y por cuánto tiempo, no reenviando enlaces sin vencimiento.",
+   "seccion": "POL-15 Finalidad, retención y entrega de datos personales",
+   "cita": "POL-15.4",
+   "atomico": true,
+   "extra": {
+    "politica": "POL-15",
+    "titulo_politica": "Finalidad, retención y entrega de datos personales",
+    "revision_obligatoria": "uso de datos de ubicación, biométricos o financieros para una finalidad nueva.",
+    "referencias": "Ley N.° 29733, Reglamento SBS 504-2021, OWASP API3:2023.",
+    "objetivo": ""
+   }
+  }
+ ]
+}

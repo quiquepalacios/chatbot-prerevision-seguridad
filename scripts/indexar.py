@@ -1,11 +1,14 @@
 """indexar.py — construye la base vectorial Chroma con todo `conocimiento/`.
 
 Se ejecuta una vez (y cada vez que cambian las fuentes). El servidor solo lee
-el índice. Pasos:
+el índice. El conocimiento queda en tres capas: originales (tal cual llegaron),
+datos limpios (conocimiento/procesado/, un JSON por documento) y fragmentos
+(Chroma). Pasos:
 
-    1. archivos      conocimiento/lineamientos + conocimiento/fuentes (uno por documento)
-    2. carga         app/rag/cargadores: texto limpio por formato
-    3. fragmentos    app/rag/fragmentos: ~150 palabras con 25 de solape;
+    1. originales    conocimiento/lineamientos + conocimiento/fuentes (uno por documento)
+    2. limpieza      app/rag/cargadores limpia cada original y app/rag/procesado lo guarda
+                     en conocimiento/procesado/ (se reutiliza si el original no cambió)
+    3. fragmentos    app/rag/fragmentos, A PARTIR DEL JSON LIMPIO: ~150 palabras con 25 de solape;
                      reglas POL y requisitos ASVS enteros
     4. repetidos     fuera los fragmentos con el mismo texto
     5. embeddings    granite multilingüe local -> Chroma (coseno), colección temporal
@@ -17,7 +20,8 @@ el índice. Pasos:
 
 Uso (desde la raíz del repositorio):
     python -m scripts.indexar
-    python -m scripts.indexar --simular      # carga y trocea, sin embeddings ni Chroma
+    python -m scripts.indexar --simular      # limpia y trocea, sin embeddings ni Chroma
+    python -m scripts.indexar --reprocesar   # vuelve a limpiar todo aunque no haya cambiado
 """
 from __future__ import annotations
 
@@ -31,7 +35,7 @@ from pathlib import Path
 from typing import Any
 
 from app import config
-from app.rag import cargadores
+from app.rag import cargadores, procesado
 from app.rag.embeddings import Embedder
 from app.rag.fragmentos import Fragmento, fragmentar, sin_repetidos
 from app.rag.indice import IndiceLineamientos, guardar_reporte
@@ -72,41 +76,66 @@ def licencias_del_manifiesto(conocimiento: Path) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# 1-4: archivos -> fragmentos
+# 1-4: originales -> datos limpios (procesado/) -> fragmentos
 # ---------------------------------------------------------------------------
-def preparar(conocimiento: Path, reglas: dict, avisar=print) -> tuple[list[Fragmento], dict]:
+def preparar(conocimiento: Path, reglas: dict, avisar=print, reprocesar: bool = False,
+             carpeta_procesado: Path | None = None) -> tuple[list[Fragmento], dict]:
+    """Capa 1 -> capa 2 -> fragmentos. Los fragmentos salen SIEMPRE del JSON limpio."""
+    carpeta_procesado = Path(carpeta_procesado or conocimiento / "procesado")
     licencias = licencias_del_manifiesto(conocimiento)
     documentos: list[dict[str, Any]] = []
     errores: list[dict[str, str]] = []
     excluidos: list[dict[str, str]] = []
     limpieza: Counter = Counter()
     todos: list[Fragmento] = []
+    capas = Counter()
+    vigentes: set[Path] = set()
 
-    rutas = cargadores.archivos_de(conocimiento)
+    rutas = [r for r in cargadores.archivos_de(conocimiento)
+             if carpeta_procesado not in r.parents]
     _, otros_formatos = cargadores.sin_formatos_repetidos(
         sorted(p for p in conocimiento.rglob("*")
-               if p.is_file() and p.suffix.lower() in cargadores.EXTENSIONES))
+               if p.is_file() and p.suffix.lower() in cargadores.EXTENSIONES
+               and carpeta_procesado not in p.parents))
     for ruta in rutas:
         relativo = ruta.relative_to(conocimiento).as_posix()
         if motivo := motivo_exclusion(ruta.name, reglas):
             excluidos.append({"archivo": relativo, "motivo": motivo})
             avisar(f"  - {relativo}: excluido ({motivo})")
             continue
-        try:
-            doc = cargadores.cargar(ruta)
-        except Exception as exc:                       # noqa: BLE001 - archivo dañado
-            errores.append({"archivo": relativo, "error": f"{type(exc).__name__}: {exc}"})
-            avisar(f"  ! {relativo}: {type(exc).__name__}: {exc}")
-            continue
-        licencia = (LICENCIA_LINEAMIENTOS if doc.tipo == "lineamiento"
-                    else licencias.get(relativo, "sin indicar"))
+        destino = procesado.ruta_para(carpeta_procesado, relativo)
+        huella = procesado.sha256(ruta)
+        if not reprocesar and procesado.vigente(destino, huella):
+            capas["reutilizados"] += 1
+            accion = "limpio reutilizado"
+        else:
+            try:
+                original = cargadores.cargar(ruta)
+            except Exception as exc:                   # noqa: BLE001 - archivo dañado
+                errores.append({"archivo": relativo, "error": f"{type(exc).__name__}: {exc}"})
+                avisar(f"  ! {relativo}: {type(exc).__name__}: {exc}")
+                continue
+            licencia_original = (LICENCIA_LINEAMIENTOS if original.tipo == "lineamiento"
+                                 else licencias.get(relativo, "sin indicar"))
+            procesado.guardar(original, destino, relativo, huella, licencia_original)
+            capas["procesados"] += 1
+            accion = "limpiado"
+        vigentes.add(destino)
+        doc, meta = procesado.leer(destino)            # el índice sale de la capa limpia
+        licencia = meta.get("licencia", "sin indicar")
         fragmentos = fragmentar(doc, relativo, licencia)
         limpieza.update(doc.limpieza)
         todos.extend(fragmentos)
         documentos.append({"archivo": relativo, "fuente": doc.fuente, "grupo": _grupo(doc),
                            "formato": doc.formato, "bloques": len(doc.bloques),
-                           "palabras": doc.palabras, "fragmentos": len(fragmentos)})
-        avisar(f"  + {relativo}: {len(fragmentos)} fragmentos")
+                           "palabras": doc.palabras, "fragmentos": len(fragmentos),
+                           "procesado": destino.relative_to(conocimiento).as_posix()})
+        avisar(f"  + {relativo}: {accion}, {len(fragmentos)} fragmentos")
+
+    for viejo in procesado.huerfanos(carpeta_procesado, vigentes):
+        viejo.unlink()
+        capas["eliminados"] += 1
+        avisar(f"  - {viejo.relative_to(conocimiento).as_posix()}: ya no tiene original, se borra")
 
     unicos, repetidos = sin_repetidos(todos)
     limpieza["fragmentos_repetidos"] += repetidos
@@ -114,7 +143,13 @@ def preparar(conocimiento: Path, reglas: dict, avisar=print) -> tuple[list[Fragm
              "otro_formato": [{"archivo": p.relative_to(conocimiento).as_posix(),
                                "se_usa": q.relative_to(conocimiento).as_posix()}
                               for p, q in otros_formatos.items()],
-             "limpieza": dict(sorted(limpieza.items()))}
+             "limpieza": dict(sorted(limpieza.items())),
+             "capas": {"originales": len(documentos), "limpios": len(vigentes),
+                       "procesados_ahora": capas["procesados"],
+                       "reutilizados": capas["reutilizados"],
+                       "eliminados": capas["eliminados"],
+                       "carpeta_limpios": carpeta_procesado.relative_to(conocimiento).as_posix()
+                       if conocimiento in carpeta_procesado.parents else str(carpeta_procesado)}}
     return unicos, datos
 
 
@@ -214,6 +249,18 @@ def reporte_markdown(reporte: dict[str, Any]) -> str:
     for nombre, g in est["por_grupo"].items():
         lineas.append(f"| {nombre} | {g['documentos']} | {g['fragmentos']} | "
                       f"{g['palabras_min']} / {g['palabras_mediana']} / {g['palabras_max']} |")
+    capas = reporte.get("capas")
+    if capas:
+        lineas += ["", "## Tres capas de datos", "",
+                   "| Capa | Dónde | Qué guarda |", "|---|---|---|",
+                   f"| 1. Originales | `conocimiento/lineamientos/` y `conocimiento/fuentes/` | "
+                   f"{capas['originales']} archivos tal cual llegaron (PDF, CSV, Markdown), con su SHA-256 |",
+                   f"| 2. Datos limpios | `conocimiento/{capas['carpeta_limpios']}/` | "
+                   f"{capas['limpios']} JSON, uno por documento: texto limpio en bloques, metadatos y qué se quitó |",
+                   f"| 3. Fragmentos | `chroma_db/` (se construye con `--indexar`) | "
+                   f"{reporte['estadisticas']['total']['fragmentos']} fragmentos con sus embeddings |",
+                   "", "El índice se construye a partir de la capa 2, no del original: lo que está en "
+                   "`procesado/` es exactamente lo que recibe el RAG."]
     lineas += ["", "## Limpieza", "", "| Qué se quitó o corrigió | Cantidad |", "|---|---:|"]
     for clave, n in reporte["limpieza"].items():
         lineas.append(f"| {NOMBRES_LIMPIEZA.get(clave, clave)} | {n} |")
@@ -275,6 +322,8 @@ def solo_control(embedder: Embedder | None = None) -> int:
 
 def main(argv: list[str] | None = None, embedder: Embedder | None = None) -> int:
     parser = argparse.ArgumentParser(description="Construye el índice Chroma de lineamientos.")
+    parser.add_argument("--reprocesar", action="store_true",
+                        help="vuelve a generar la capa limpia aunque los originales no cambiaron")
     parser.add_argument("--simular", action="store_true",
                         help="carga y trocea sin calcular embeddings ni tocar Chroma")
     parser.add_argument("--sin-control", action="store_true",
@@ -289,7 +338,10 @@ def main(argv: list[str] | None = None, embedder: Embedder | None = None) -> int
     conocimiento = config.CARPETA_CONOCIMIENTO
     inicio = time.perf_counter()
     print(f"Leyendo {conocimiento}")
-    fragmentos, datos = preparar(conocimiento, cargar_reglas())
+    fragmentos, datos = preparar(conocimiento, cargar_reglas(), reprocesar=args.reprocesar)
+    c = datos["capas"]
+    print(f"\nCapas: {c['originales']} originales -> {c['limpios']} limpios en conocimiento/{c['carpeta_limpios']}/ "
+          f"({c['procesados_ahora']} limpiados ahora, {c['reutilizados']} reutilizados, {c['eliminados']} borrados)")
     if not fragmentos:
         print("\nNo hay fragmentos que indexar. ¿Ejecutaste 'python -m scripts.descargar_fuentes'?")
         return 1

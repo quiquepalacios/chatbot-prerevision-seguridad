@@ -1,0 +1,43 @@
+{
+ "version_formato": 1,
+ "original": "fuentes/top10_2025_es/A05_2025-Injection.md",
+ "sha256_original": "302e673162066f53365d0cea7bb95c6c2bbc254911421f4f9996bda242dc93cc",
+ "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+ "procesado": "2026-11-22T08:16:02",
+ "fuente": "A05:2025",
+ "titulo": "A05:2025 Inyección",
+ "tipo": "owasp",
+ "formato": "md",
+ "palabras": 1014,
+ "limpieza": {
+  "etiquetas_html": 24,
+  "imagenes": 1,
+  "secciones_omitidas": 1
+ },
+ "bloques": [
+  {
+   "texto": "La Inyección cae dos posiciones del #3 al #5 en el ranking, manteniendo su posición relativa respecto a A04:2025-Fallas Criptográficas y A06:2025-Diseño Inseguro. La inyección es una de las categorías más probadas, con el 100% de las aplicaciones evaluadas para algún tipo de inyección. Tuvo el mayor número de CVEs de cualquier categoría, con 37 CWEs en esta categoría. La inyección incluye Cross-Site Scripting (XSS) (alta frecuencia/bajo impacto) con más de 30.000 CVEs e Inyección SQL (baja frecuencia/alto impacto) con más de 14.000 CVEs. La gran cantidad de CVEs reportados para CWE-79 Neutralización Inadecuada de Entradas Durante la Generación de Páginas Web ('Cross-site Scripting') reduce el impacto ponderado promedio de esta categoría.",
+   "seccion": "A05:2025 Inyección > Antecedentes."
+  },
+  {
+   "texto": "CWEs Mapeados Tasa Máx. de Incidencia Tasa Prom. de Incidencia Cobertura Máx. Cobertura Prom. Explotabilidad Ponderada Prom. Impacto Ponderado Prom. Total de Ocurrencias Total de CVEs 37 13.77% 3.08% 100.00% 42.93% 7.15 4.32 1,404,249 62,445",
+   "seccion": "A05:2025 Inyección > Tabla de puntuación."
+  },
+  {
+   "texto": "Una vulnerabilidad de inyección es una falla en una aplicación que permite que entradas no confiables del usuario sean enviadas a un intérprete (p. ej., un navegador, una base de datos, la línea de comandos) y provoca que el intérprete ejecute partes de esa entrada como comandos. Una aplicación es vulnerable a estos tipos de ataque cuando: * Los datos proporcionados por el usuario no son validados, filtrados ni sanitizados por la aplicación. * Se invocan consultas dinámicas o llamadas no parametrizadas, sin codificar los parámetros de forma acorde al contexto, directamente en el intérprete. * Se utilizan datos no sanitizados dentro de los parámetros de búsqueda en consultas de Mapeo Relacional de Objetos (ORM — Object-Relational Mapping), para extraer registros sensibles adicionales. * Se utilizan datos potencialmente dañinos directamente o se concatenan. El SQL o comando resultante contiene la estructura y los datos maliciosos en consultas dinámicas, comandos o procedimientos almacenados. Algunas de las inyecciones más comunes son SQL, NoSQL, comandos de sistema operativo (OS), Mapeo Relacional de Objetos (ORM), LDAP (Lightweight Directory Access Protocol) (Protocolo Ligero de Acceso a Directorios), y lenguaje de expresiones (EL) u Object Graph Navigation Library (OGNL). El concepto es idéntico para todos los intérpretes. La detección se logra mejor mediante una combinación de revisión de código fuente junto con pruebas automatizadas (incluyendo fuzzing) de todos los parámetros, encabezados, URL, cookies, datos JSON, SOAP y XML. La incorporación de herramientas de pruebas de seguridad de aplicaciones estáticas (SAST), dinámicas (DAST) e interactivas (IAST) en el pipeline de CI/CD también puede ser de utilidad para identificar fallas de inyección antes del despliegue en producción. Una clase relacionada de vulnerabilidades de inyección se ha vuelto común en los LLMs. Estas se tratan por separado en el OWASP LLM Top 10, específicamente en LLM01:2025 Inyección de Prompts (Prompt Injection).",
+   "seccion": "A05:2025 Inyección > Descripción."
+  },
+  {
+   "texto": "El mejor medio para prevenir inyecciones requiere mantener los datos separados de los comandos y las consultas: * La opción preferida es utilizar una API segura, que evite el uso del intérprete por completo, proporcione una interfaz parametrizada, o migre a herramientas de Object-Relational Mapping (ORMs). Nota: Incluso cuando se parametrizan, los procedimientos almacenados pueden seguir introduciendo inyección SQL si PL/SQL o T-SQL concatena consultas y datos, o si se ejecutan datos dañinos con EXECUTE IMMEDIATE o exec(). Cuando no sea posible separar los datos de los comandos, se pueden reducir las amenazas utilizando las siguientes técnicas. * Implemente validaciones de entradas de datos del lado del servidor, utilizando \"listas blancas\" (allow-lists). De todos modos, esto no es una defensa completa, ya que muchas aplicaciones requieren el uso de caracteres especiales, como en campos de texto o APIs para aplicaciones móviles. * Para cualquier consulta dinámica restante, escape los caracteres especiales utilizando la sintaxis de escape específica para el intérprete en cuestión. Nota: Las estructuras SQL como nombres de tablas, nombres de columnas, etc. no pueden ser escapadas y, por lo tanto, los nombres de estructura suministrados por el usuario son peligrosos. Este es un problema común en el software de generación de informes. Advertencia: estas técnicas implican el análisis sintáctico (parsing) y el escape de cadenas complejas, lo que las hace propensas a errores y poco robustas ante cambios menores en el sistema subyacente.",
+   "seccion": "A05:2025 Inyección > Cómo se previene."
+  },
+  {
+   "texto": "Escenario #1: Una aplicación utiliza datos no confiables en la construcción de la siguiente consulta SQL vulnerable: String query = \"SELECT * FROM accounts WHERE custID='\" + request.getParameter(\"id\") + \"'\"; Un atacante modifica el valor del parámetro 'id' en su navegador para enviar: ' OR '1'='1. Por ejemplo: http://example.com/app/accountView?id=' OR '1'='1 Esto modifica el significado de la consulta para retornar todos los registros de la tabla accounts. Ataques más peligrosos podrían modificar o eliminar datos, o incluso invocar procedimientos almacenados. Escenario #2: La confianza ciega de una aplicación en los frameworks puede dar lugar a consultas que siguen siendo vulnerables. Por ejemplo, Hibernate Query Language (HQL): Query HQLQuery = session.createQuery(\"FROM accounts WHERE custID='\" + request.getParameter(\"id\") + \"'\"); Un atacante suministra: ' OR custID IS NOT NULL OR custID='. Esto elude el filtro y retorna todas las cuentas. Si bien HQL tiene menos funciones peligrosas que el SQL puro, sigue permitiendo el acceso no autorizado a datos cuando se concatenan entradas del usuario en las consultas. Escenario #3: Una aplicación pasa la entrada del usuario directamente a un comando del sistema operativo: String cmd = \"nslookup \" + request.getParameter(\"domain\"); Runtime.getRuntime().exec(cmd); Un atacante suministra example.com; cat /etc/passwd para ejecutar comandos arbitrarios en el servidor.",
+   "seccion": "A05:2025 Inyección > Ejemplos de escenarios de ataque."
+  },
+  {
+   "texto": "* OWASP Controles Proactivos: Acceso Seguro a Bases de Datos (Secure Database Access) * OWASP ASVS: V5 Validación de Entradas y Codificación (Input Validation and Encoding) * Guía de Pruebas OWASP: Inyección SQL (SQL Injection), Inyección de Comandos (Command Injection), y Inyección ORM (ORM Injection) * Guía de referencia rápida de OWASP: Prevención de Inyección (Injection Prevention)](https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet.html) * Guía de referencia rápida de OWASP: Prevención de Inyección SQL (SQL Injection Prevention)](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html) * Guía de referencia rápida de OWASP: Prevención de Inyección en Java (Injection Prevention in Java)](https://cheatsheetseries.owasp.org/cheatsheets/Injection_Prevention_Cheat_Sheet_in_Java.html) * Guía de referencia rápida de OWASP: Parametrización de Consultas (Query Parameterization)](https://cheatsheetseries.owasp.org/cheatsheets/Query_Parameterization_Cheat_Sheet.html) * Amenazas Automatizadas OWASP a Aplicaciones Web – OAT-014 * PortSwigger: Inyección de plantillas del lado del servidor (Server-side template injection) * Awesome Fuzzing: lista de recursos de fuzzing",
+   "seccion": "A05:2025 Inyección > Referencias."
+  }
+ ]
+}

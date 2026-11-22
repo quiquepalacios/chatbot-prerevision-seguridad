@@ -1,6 +1,6 @@
 # Reporte del índice de lineamientos
 
-Generado por `python -m scripts.indexar` el 2026-11-21 18:44. Embeddings: `ibm-granite/granite-embedding-97m-multilingual-r2` (dimensión 384). Fragmentos de hasta 150 palabras con 25 de solape; las reglas POL y los requisitos ASVS se indexan enteros (uno por fragmento).
+Generado por `python -m scripts.indexar` el 2026-11-22 08:18. Embeddings: `ibm-granite/granite-embedding-97m-multilingual-r2` (dimensión 384). Fragmentos de hasta 150 palabras con 25 de solape; las reglas POL y los requisitos ASVS se indexan enteros (uno por fragmento).
 
 **Total: 36 documentos y 1841 fragmentos** (palabras por fragmento: mínimo 12, mediana 106, máximo 150).
 
@@ -12,6 +12,16 @@ Generado por `python -m scripts.indexar` el 2026-11-21 18:44. Embeddings: `ibm-g
 | OWASP ASVS 5.0 | 1 | 345 | 15 / 42 / 109 |
 | OWASP Cheat Sheets | 10 | 357 | 13 / 110 / 150 |
 | OWASP Top 10:2025 (es) | 10 | 109 | 35 / 127 / 150 |
+
+## Tres capas de datos
+
+| Capa | Dónde | Qué guarda |
+|---|---|---|
+| 1. Originales | `conocimiento/lineamientos/` y `conocimiento/fuentes/` | 36 archivos tal cual llegaron (PDF, CSV, Markdown), con su SHA-256 |
+| 2. Datos limpios | `conocimiento/procesado/` | 36 JSON, uno por documento: texto limpio en bloques, metadatos y qué se quitó |
+| 3. Fragmentos | `chroma_db/` (se construye con `--indexar`) | 1841 fragmentos con sus embeddings |
+
+El índice se construye a partir de la capa 2, no del original: lo que está en `procesado/` es exactamente lo que recibe el RAG.
 
 ## Limpieza
 
@@ -31,7 +41,7 @@ Generado por `python -m scripts.indexar` el 2026-11-21 18:44. Embeddings: `ibm-g
 
 ## Preguntas de control
 
-Acierto: **16/16** (la cita esperada aparece entre los 3 fragmentos que llegan al prompt). Mejor similitud en tema, mínima: 0.8302; fuera de tema, máxima: 0.8012. Umbral configurado: 0.79; sugerido: 0.816.
+Acierto: **16/16** (la cita esperada aparece entre los 3 fragmentos que llegan al prompt). Mejor similitud en tema, mínima: 0.8302; fuera de tema, máxima: 0.8207. Umbral configurado: 0.79; sugerido: 0.825.
 
 | Pregunta | ¿Acierta? | Citas recuperadas | Similitud |
 |---|---|---|---:|
@@ -51,8 +61,8 @@ Acierto: **16/16** (la cita esperada aparece entre los 3 fragmentos que llegan a
 | broken object level authorization IDOR ownership check | sí | API1:2023, OWASP Cheat Sheet: Authorization, POL-01.2 | 0.9165 |
 | SSRF el backend llama a una URL enviada por el cliente | sí | OWASP Cheat Sheet: Server Side Request Forgery Prevention, ASVS V3.4.5, POL-08.1 | 0.9193 |
 | asignación masiva: el cliente puede enviar el campo rol o admin al registrarse | sí | OWASP Cheat Sheet: Mass Assignment, OWASP Cheat Sheet: Mass Assignment, POL-01.5 | 0.8688 |
-| *(fuera de tema)* ¿Cuál es la receta del ceviche? | — | POL-08.5 | 0.7239 |
-| *(fuera de tema)* ¿Quién ganó el partido de fútbol de ayer? | — | POL-11.2 | 0.7073 |
-| *(fuera de tema)* ¿Cuál es el saldo de mi cuenta de ahorros? | — | POL-11.1 | 0.8012 |
-| *(fuera de tema)* Recomiéndame una película para el fin de semana | — | POL-15.3 | 0.7117 |
-| *(fuera de tema)* ¿Cuánto cuesta un pasaje a Cusco? | — | POL-11.2 | 0.7257 |
+| *(fuera de tema)* ¿Cuál es la receta del ceviche? | — | API10:2023 | 0.7605 |
+| *(fuera de tema)* ¿Quién ganó el partido de fútbol de ayer? | — | API8:2023 | 0.7439 |
+| *(fuera de tema)* ¿Cuál es el saldo de mi cuenta de ahorros? | — | NIST SP 800-63B-4 | 0.8207 |
+| *(fuera de tema)* Recomiéndame una película para el fin de semana | — | NIST SP 800-218 | 0.7448 |
+| *(fuera de tema)* ¿Cuánto cuesta un pasaje a Cusco? | — | API6:2023 | 0.7641 |

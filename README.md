@@ -50,7 +50,7 @@ Si no hay modelo (sin clave, sin red o con el proveedor caído), el bot responde
 
 - Windows 10/11 (principal) o cualquier sistema con **Python 3.12 de 64 bits**.
 - Unos 3 GB libres: PyTorch, el modelo de embeddings (~200 MB) y la base vectorial.
-- Internet la primera vez: dependencias, fuentes OWASP/NIST y modelo de embeddings.
+- Internet la primera vez: dependencias y modelo de embeddings. Las fuentes (originales y limpias) ya vienen en el repositorio.
 - Una clave de API de **OpenAI**. El modelo configurado es `gpt-6.2-sol` (gama media-alta, con razonamiento y *function calling*; unos USD 0,10-0,15 por revisión). Sin clave, el bot funciona en modo demo.
 
 ## Instalación y ejecución
@@ -66,12 +66,11 @@ cd andesur
 Edita `.env` y completa `LLM_API_KEY`; el modelo ya viene configurado (ver [Configuración](#configuración-env)). Luego:
 
 ```bat
-.\run.bat --descargar    :: baja las fuentes OWASP y NIST (35 archivos, ~4 MB)
-.\run.bat --indexar      :: construye la base vectorial Chroma (~2 min la primera vez)
+.\run.bat --indexar      :: construye la base vectorial Chroma desde los datos limpios (~2 min la primera vez)
 .\run.bat --iniciar      :: abre http://127.0.0.1:8040
 ```
 
-Usa `.\run.bat` (con `.\`): algunos equipos no ejecutan programas de la carpeta actual si no se indica la ruta. Otras opciones: `--evaluar` (casos de prueba), `--importar --desde "C:\mis_fuentes"` (fuentes locales), `--check`, `--diag`, `--reparar` y `--offline`.
+Usa `.\run.bat` (con `.\`): algunos equipos no ejecutan programas de la carpeta actual si no se indica la ruta. Otras opciones: `--evaluar` (casos de prueba), `--descargar` (vuelve a bajar las fuentes oficiales; no hace falta, ya están en el repositorio), `--importar --desde "C:\mis_fuentes"` (fuentes locales), `--check`, `--diag`, `--reparar` y `--offline`.
 
 ### Manual (cualquier sistema)
 
@@ -81,8 +80,7 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env               # completa LLM_API_KEY
 python -m pytest                   # pruebas: sin red y sin clave
-python -m scripts.descargar_fuentes
-python -m scripts.indexar
+python -m scripts.indexar           # las fuentes ya vienen en conocimiento/
 python -m uvicorn app.main:app --port 8040
 ```
 
@@ -160,6 +158,16 @@ Formato de cada hallazgo (`hallazgos` en la respuesta de `/api/chat`):
 
 Los datos se usan para **consultar, no para entrenar**: el bot los recupera en cada pregunta.
 
+**Tres capas de datos**, como recomendó el docente:
+
+| Capa | Dónde | Qué guarda |
+|---|---|---|
+| 1. Originales | `conocimiento/lineamientos/` y `conocimiento/fuentes/` (en el repositorio) | Los 36 archivos tal cual llegaron (PDF, CSV, Markdown), con su SHA-256 en `fuentes/manifiesto.json` |
+| 2. Datos limpios | `conocimiento/procesado/` (en el repositorio) | Un JSON por documento: el texto ya limpio en bloques, sus metadatos (fuente, cita, sección, página, licencia) y qué se le quitó |
+| 3. Fragmentos | `chroma_db/` (se genera con `--indexar`) | 1841 fragmentos con sus embeddings |
+
+El índice se construye **a partir de la capa 2**, no del original: lo que está en `procesado/` es exactamente lo que recibe el RAG, y se puede abrir y revisar sin ejecutar nada. Cada JSON guarda la huella del original; si el original cambia, `--indexar` lo vuelve a limpiar y, si no, lo reutiliza.
+
 | Fuente | Formato | Documentos | Fragmentos |
 |---|---|---:|---:|
 | Lineamientos LSA-2026 de Banco Andesur (ficticio, en el repo) | Markdown, una regla por fragmento | 1 (15 políticas, 73 reglas) | 73 |
@@ -172,7 +180,7 @@ Los datos se usan para **consultar, no para entrenar**: el bot los recupera en c
 
 Fragmentos de hasta 150 palabras con 25 de solape, cortados por oraciones con spaCy. Las reglas POL y los requisitos ASVS se indexan enteros, porque cada uno es la unidad que se cita. Detalle por fuente en [docs/reporte_indice.md](docs/reporte_indice.md).
 
-- **Procedencia:** `scripts/descargar_fuentes.py` baja de los repositorios oficiales de OWASP (fijados a un commit) y de nvlpubs.nist.gov. Valida cada archivo y anota URL, licencia y SHA-256 en `conocimiento/fuentes/manifiesto.json`.
+- **Procedencia:** los originales se bajaron con `scripts/descargar_fuentes.py` de los repositorios oficiales de OWASP (fijados a un commit) y de nvlpubs.nist.gov; cada archivo se validó y su URL, licencia y SHA-256 están en `conocimiento/fuentes/manifiesto.json`. Se versionan sin conversión de finales de línea para que sean idénticos byte a byte.
 - **Limpieza** (`app/rag/cargadores.py`):
   - PDF: quita encabezados y pies de página que se repiten (1057), números de página e índices (235 líneas) y une las palabras cortadas con guion (99).
   - Markdown y HTML: quita imágenes, enlaces y etiquetas, además de secciones sin valor para recomendar, como tablas de cifras, listas de CWE y bibliografía.
@@ -209,7 +217,7 @@ Fragmentos de hasta 150 palabras con 25 de solape, cortados por oraciones con sp
 │  ├─ datos/             SQLite, logs JSONL e informes MD/CSV
 │  ├─ llm/               router del curso (copia local)
 │  └─ static/            chat web
-├─ conocimiento/         lineamientos LSA-2026 (en el repo) y fuentes descargadas (fuera de Git)
+├─ conocimiento/         capa 1: lineamientos/ y fuentes/ (originales) · capa 2: procesado/ (datos limpios)
 ├─ casos_prueba/         casos, trampas, escenarios y hoja de respuestas
 ├─ scripts/              descargar_fuentes, importar_fuentes, indexar, evaluar_casos
 ├─ tests/                pruebas con RouterFalso (sin red ni clave)
@@ -237,7 +245,7 @@ Las capturas van en `docs/capturas/`:
 ## Licencias y atribución
 
 - Código: [MIT](LICENSE).
-- **OWASP** ASVS 5.0, API Security Top 10 2023, Top 10:2025 y Cheat Sheet Series: © OWASP Foundation, licencia [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Se descargan sin modificar desde github.com/OWASP; el índice guarda fragmentos con su cita.
+- **OWASP** ASVS 5.0, API Security Top 10 2023, Top 10:2025 y Cheat Sheet Series: © OWASP Foundation, licencia [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Los originales se incluyen sin modificar (bajados de github.com/OWASP) y la capa limpia en `conocimiento/procesado/` es una adaptación de ese material: se distribuye bajo la misma licencia CC BY-SA 4.0, con esta atribución.
 - **NIST** SP 800-204, 800-207, 800-218 y 800-63B-4: publicaciones del Gobierno de EE. UU., de dominio público.
 - Los lineamientos LSA-2026, los casos de prueba y Banco Andesur son ficticios, creados para este trabajo. Los casos se inspiran en OWASP crAPI, VAmPI y OWASP Juice Shop.
 - `app/llm/llm_router.py` es el router del curso DMC, incluido para que el repositorio funcione solo.

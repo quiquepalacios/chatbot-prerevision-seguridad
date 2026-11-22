@@ -1,0 +1,285 @@
+{
+  "generado": "2026-11-21T23:29:37+00:00",
+  "archivos": [
+    {
+      "archivo": "api_top10_2023/0xa1-broken-object-level-authorization.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa1-broken-object-level-authorization.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 5340,
+      "sha256": "f5a827897509a005095c306d05e56b8dc713717a78cb5360a2ba4b3c29bf4b2b",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa2-broken-authentication.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa2-broken-authentication.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 5939,
+      "sha256": "9c15446740599f7bcf709a406ca5627028793e701dd1798ba711a95e9b933971",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa3-broken-object-property-level-authorization.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa3-broken-object-property-level-authorization.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 5904,
+      "sha256": "d316b89ee31f4689d4a4fafd1b97b62b7d05ac880945a478991ae4abf64a961d",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa4-unrestricted-resource-consumption.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa4-unrestricted-resource-consumption.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 7447,
+      "sha256": "8df9df403fd0007bc28bd9a9a60e46739c6797b1f7135c7f0f683a7362f40e38",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa5-broken-function-level-authorization.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa5-broken-function-level-authorization.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 4858,
+      "sha256": "bdaf0f1f0ec6e527c0c30aaca50a7328ed5b3c386bf6ab86e878116f4a3dd808",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa6-unrestricted-access-to-sensitive-business-flows.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa6-unrestricted-access-to-sensitive-business-flows.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 5129,
+      "sha256": "b499f299f634b20557d0f9e335b105d6a738039fe5436b3eb09fe7f74ce63a27",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa7-server-side-request-forgery.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa7-server-side-request-forgery.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 5818,
+      "sha256": "f1abf2f9d55a0b50a2004e44bc2ea95348c41452197bc5d1bc7dd71b70f52e6c",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa8-security-misconfiguration.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa8-security-misconfiguration.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 6524,
+      "sha256": "13b9629746921f2ccd6fac1364cdfbb50f10d7b11faf668589d9994716c333de",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xa9-improper-inventory-management.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xa9-improper-inventory-management.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 6122,
+      "sha256": "8d5d7e6130fac2b28f5808508d4f90683d99ae5a37f9d3d0d9714c853c39ca4f",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "api_top10_2023/0xaa-unsafe-consumption-of-apis.md",
+      "url": "https://raw.githubusercontent.com/OWASP/API-Security/33cea37b2ffde3e2e62f6b5d79a029a22a846633/editions/2023/en/0xaa-unsafe-consumption-of-apis.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 4989,
+      "sha256": "b5fe9034253ca2d7f7c4c9ef0a6db2b71da1689490911a5bb1f5aad2cab78706",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "asvs/OWASP_Application_Security_Verification_Standard_5.0.0_en.csv",
+      "url": "https://github.com/OWASP/ASVS/releases/download/v5.0.0_release/OWASP_Application_Security_Verification_Standard_5.0.0_en.csv",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 105446,
+      "sha256": "6124dba176dc563f66363a11ae0c47f9b86b8a4a84c66a793670bd196ed86cd5",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Authorization_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Authorization_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 31021,
+      "sha256": "fb8b6e5c60ed783025beefb5049142fd9da02d01f5c95de18a19d26479737975",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/File_Upload_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/File_Upload_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 15136,
+      "sha256": "78fac058141b731232625b00cee87a89a5fa7a85e580b7c8ec266795f9536e7d",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Input_Validation_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Input_Validation_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 10895,
+      "sha256": "421efd00219c14510d2a42592701e69f562766de3f74fa83667e4edafbd5e10e",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/JSON_Web_Token_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/JSON_Web_Token_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 36158,
+      "sha256": "a604ef0656402d012870a28e16f8492b2160f7bd084f378855fd55b6e2dac030",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Logging_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Logging_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 30539,
+      "sha256": "55ed0b4e9b2a68dba0f5a26c817a20760632d91b315aa42bb33ecfe36cc7195d",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Mass_Assignment_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Mass_Assignment_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 9086,
+      "sha256": "f325d48b32fd86e2b5450f51ccf773b639263f3c16b6daf6634587c262e5d4ea",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Microservices_Security_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Microservices_Security_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 9093,
+      "sha256": "8536aca65d330baad4aae41498b0ee1e8dec4732c71905db73c0786b37cac455",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/REST_Security_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/REST_Security_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 26349,
+      "sha256": "3e2959541004f37a28d47ea1f742f30f46d06a331317eb4d9371617f2ad7a704",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Secrets_Management_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Secrets_Management_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 57712,
+      "sha256": "c7b67badc6e5990da90d1942f48b73e6e354f157de9b4eee56381cf4a906ae61",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.md",
+      "url": "https://raw.githubusercontent.com/OWASP/CheatSheetSeries/c2a1e3e32cec12f27be0a3b1e771ce51288a363e/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 30915,
+      "sha256": "cfd23149653bdb4390817864c818b4ac5b8460b75ddfc2805dda3fd353e81060",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "nist/NIST.SP.800-204.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-204.pdf",
+      "licencia": "Dominio público (NIST, Gobierno de EE. UU.)",
+      "bytes": 814054,
+      "sha256": "25412c860165e5ee1cfbf26ed47c56f4d213b1996a73365f5561be6403cf7588",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "nist/NIST.SP.800-207.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf",
+      "licencia": "Dominio público (NIST, Gobierno de EE. UU.)",
+      "bytes": 966908,
+      "sha256": "0290d6ece24874287316f4bf430fef770aa4ec08a2227c8f2c1e5b2ff975e03d",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "nist/NIST.SP.800-218.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf",
+      "licencia": "Dominio público (NIST, Gobierno de EE. UU.)",
+      "bytes": 739891,
+      "sha256": "617746e553a9e2da49bfbd4eef0dfc3094758a39b869314e4173ac36605cde22",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "nist/NIST.SP.800-63b-4.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-63b-4.pdf",
+      "licencia": "Dominio público (NIST, Gobierno de EE. UU.)",
+      "bytes": 993734,
+      "sha256": "d9ab89576b5ae2cfb3ba37781110788dea27a85a5079496dbfc1a79834670afd",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A01_2025-Broken_Access_Control.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A01_2025-Broken_Access_Control.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 13938,
+      "sha256": "13077927ef359b2af4a398db859e6dcdde726142f4bdd04de8e88a916db13be0",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A02_2025-Security_Misconfiguration.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A02_2025-Security_Misconfiguration.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 10367,
+      "sha256": "ba0af4ce4b69b5eac5f35e86f27dade606677116e21b52609d776a79cb7159a3",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A03_2025-Software_Supply_Chain_Failures.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A03_2025-Software_Supply_Chain_Failures.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 14821,
+      "sha256": "f48dc179bba9489a0a6388802c6095fc2e4e145c877f782b917365cd8515a34e",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A04_2025-Cryptographic_Failures.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A04_2025-Cryptographic_Failures.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 16412,
+      "sha256": "88acc9e34060a4cd93f541afaeb070183ed946b45ce4f213ac90f3932361b61e",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A05_2025-Injection.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A05_2025-Injection.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 16462,
+      "sha256": "302e673162066f53365d0cea7bb95c6c2bbc254911421f4f9996bda242dc93cc",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A06_2025-Insecure_Design.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A06_2025-Insecure_Design.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 15994,
+      "sha256": "3231bc8aa9937ed657ebf4eff0bff6fcf0341126b9ef04f2909b12391531d019",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A07_2025-Authentication_Failures.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A07_2025-Authentication_Failures.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 14844,
+      "sha256": "583bee8bf0cbbbdda089e04e52bd6bfbdb62a841c8ce788192d1cac25f89c19d",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A08_2025-Software_or_Data_Integrity_Failures.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A08_2025-Software_or_Data_Integrity_Failures.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 9839,
+      "sha256": "459ba30b39358e2e3385fd94ee520f53c97bb83d73c882729e99c889b73678d8",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A09_2025-Security_Logging_and_Alerting_Failures.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A09_2025-Security_Logging_and_Alerting_Failures.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 11007,
+      "sha256": "379be5bd1c338615a67bd6e02267a7a1917f8da7e2da336b062f5e24e1cc34c3",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    },
+    {
+      "archivo": "top10_2025_es/A10_2025-Mishandling_of_Exceptional_Conditions.md",
+      "url": "https://raw.githubusercontent.com/OWASP/Top10/3a31f35346c3f4e90f350395124382fa53af2afe/2025/docs/es/A10_2025-Mishandling_of_Exceptional_Conditions.md",
+      "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+      "bytes": 13501,
+      "sha256": "9cca09481043e1c9c933e4dbe05a792b4a55c19c3cf955749dba95623f16c208",
+      "descargado": "2026-11-21T23:29:37+00:00"
+    }
+  ]
+}

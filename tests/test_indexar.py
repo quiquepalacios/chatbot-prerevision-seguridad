@@ -48,6 +48,11 @@ def test_indexar_construye_indice_y_reportes(tmp_path, monkeypatch):
 
 
 def test_simular_no_toca_chroma(tmp_path, monkeypatch):
+    conocimiento = tmp_path / "conocimiento"
+    (conocimiento / "lineamientos").mkdir(parents=True)
+    shutil.copy(config.CARPETA_LINEAMIENTOS / "politicas_seguridad_banco_andesur.md",
+                conocimiento / "lineamientos")
+    monkeypatch.setattr(config, "CARPETA_CONOCIMIENTO", conocimiento)   # no escribe en el repo
     monkeypatch.setattr(config, "CHROMA_DIR", tmp_path / "chroma")
     assert indexar.main(["--simular"], embedder=embedder_falso) == 0
     assert not (tmp_path / "chroma").exists()

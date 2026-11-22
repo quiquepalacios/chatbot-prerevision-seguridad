@@ -6,7 +6,7 @@ rem Basado en el producto de la sesion 7 del curso DMC.
 rem
 rem Uso:
 rem    run.bat              configura el entorno y sale
-rem    run.bat --descargar  baja las fuentes OWASP que no vienen en el repo
+rem    run.bat --descargar  vuelve a bajar las fuentes oficiales (opcional)
 rem    run.bat --importar --desde "C:\mis_fuentes"   suma fuentes de una carpeta local
 rem    run.bat --indexar    construye la base vectorial Chroma (una sola vez)
 rem    run.bat --iniciar    arranca el servidor en http://127.0.0.1:8040
@@ -201,7 +201,6 @@ if not exist "chroma_db" if defined MODO_INICIAR (
     echo.
     echo AVISO: todavia no existe la base vectorial ^(chroma_db^).
     echo El chat arranca, pero sin lineamientos. Para crearla:
-    echo    run.bat --descargar
     echo    run.bat --indexar
     echo.
 )

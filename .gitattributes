@@ -2,3 +2,7 @@
 *.bat text eol=crlf
 *.png binary
 *.pdf binary
+# Originales y datos limpios: sin conversión de finales de línea, para que cada
+# archivo sea idéntico byte a byte en cualquier equipo (su SHA-256 está en el
+# manifiesto y en cada JSON de conocimiento/procesado/).
+conocimiento/** -text

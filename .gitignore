@@ -19,9 +19,10 @@ data/informes/
 run.log
 diagnostico.txt
 
-# fuentes descargadas (las baja scripts/descargar_fuentes.py)
-conocimiento/fuentes/*
-!conocimiento/fuentes/.gitkeep
+# conocimiento/: los originales (fuentes/, lineamientos/) y los datos limpios
+# (procesado/) SÍ se versionan; solo los fragmentos (chroma_db/) se generan.
+conocimiento/fuentes/**/*.parcial
+conocimiento/procesado/**/*.parcial
 
 # sistema
 .DS_Store

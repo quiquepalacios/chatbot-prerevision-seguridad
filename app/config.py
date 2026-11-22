@@ -64,7 +64,8 @@ def _ruta(nombre: str, por_defecto: str) -> Path:
 # -- rutas -------------------------------------------------------------------
 CARPETA_CONOCIMIENTO = _ruta("CONOCIMIENTO_DIR", "conocimiento")
 CARPETA_LINEAMIENTOS = CARPETA_CONOCIMIENTO / "lineamientos"   # en el repo
-CARPETA_FUENTES = CARPETA_CONOCIMIENTO / "fuentes"             # descargadas, fuera de Git
+CARPETA_FUENTES = CARPETA_CONOCIMIENTO / "fuentes"             # originales, tal cual llegaron
+CARPETA_PROCESADO = CARPETA_CONOCIMIENTO / "procesado"         # datos limpios (capa 2)
 CARPETA_CASOS = _ruta("CASOS_DIR", "casos_prueba")
 RUTA_DB = _ruta("DB_PATH", "data/revisiones.db")
 CARPETA_LOGS = _ruta("LOG_DIR", "data/logs")

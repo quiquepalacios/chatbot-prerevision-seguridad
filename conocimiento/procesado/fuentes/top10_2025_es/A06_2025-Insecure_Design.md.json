@@ -1,0 +1,47 @@
+{
+ "version_formato": 1,
+ "original": "fuentes/top10_2025_es/A06_2025-Insecure_Design.md",
+ "sha256_original": "3231bc8aa9937ed657ebf4eff0bff6fcf0341126b9ef04f2909b12391531d019",
+ "licencia": "CC BY-SA 4.0 (OWASP Foundation)",
+ "procesado": "2026-11-22T08:16:02",
+ "fuente": "A06:2025",
+ "titulo": "A06:2025 – Diseño Inseguro",
+ "tipo": "owasp",
+ "formato": "md",
+ "palabras": 1182,
+ "limpieza": {
+  "etiquetas_html": 24,
+  "imagenes": 1,
+  "secciones_omitidas": 3
+ },
+ "bloques": [
+  {
+   "texto": "Diseño Inseguro baja dos posiciones del #4 al #6 en el ranking, ya que A02:2025-Configuración de Seguridad Incorrecta y A03:2025-Fallas en la Cadena de Suministro de Software la superan. Esta categoría fue introducida en 2021 y hemos observado mejoras notables en la industria relacionadas con el modelado de amenazas y un mayor énfasis en el diseño seguro. Esta categoría se enfoca en los riesgos relacionados con fallas de diseño y arquitectura, con un llamado a un mayor uso de modelado de amenazas, patrones de diseño seguros y arquitecturas de referencia. Esto incluye fallas en la lógica de negocio de una aplicación, por ejemplo, la falta de definición de cambios de estado no deseados o inesperados dentro de una aplicación. Como comunidad, necesitamos ir más allá del \"desplazamiento a la izquierda\" en el espacio de codificación, hacia actividades previas al código, como la redacción de requisitos y el diseño de aplicaciones, que son fundamentales para los principios de Seguridad por Diseño (ver Establecer un Programa Moderno de AppSec: Fase de Planificación y Diseño). Las Enumeraciones de Debilidades Comunes (CWE) notables incluyen *CWE-256: Almacenamiento Desprotegido de Credenciales, CWE-269: Gestión Incorrecta de Privilegios, CWE-434: Subida sin Restricciones de Archivos de Tipo Peligroso, CWE-501: Violación de Límites de Confianza y CWE-522: Credenciales Insuficientemente Protegidas.*",
+   "seccion": "A06:2025 – Diseño Inseguro > Antecedentes"
+  },
+  {
+   "texto": "El diseño inseguro es una categoría amplia que representa diferentes debilidades, expresadas como \"diseño de control faltante o ineficaz\". El diseño inseguro no es la fuente de las otras 10 categorías. Existe una diferencia entre un diseño inseguro y una implementación insegura. Distinguimos entre fallas de diseño y defectos de implementación por un motivo, difieren en la causa raíz y remediaciones. Incluso un diseño seguro puede tener defectos de implementación que conduzcan a vulnerabilidades que pueden explotarse. Un diseño inseguro no se puede arreglar con una implementación perfecta, ya que, por definición, los controles de seguridad necesarios nunca se crearon para defenderse de ataques específicos. Uno de los factores que contribuye al diseño inseguro es la falta de perfiles de riesgo empresarial inherentes al software o sistema en desarrollo y, por lo tanto, la falta de determinación del nivel de diseño de seguridad que se requiere. Los tres componentes clave de un diseño seguro son: * Recopilación de Requisitos y Gestión de Recursos * Creación de un Diseño Seguro * Contar con un Ciclo de Vida de Desarrollo Seguro",
+   "seccion": "A06:2025 – Diseño Inseguro > Descripción"
+  },
+  {
+   "texto": "Recopile y negocie los requisitos de negocio de la aplicación con las partes interesadas, incluidos los requisitos de protección relacionados con la confidencialidad, integridad, disponibilidad y autenticidad de todos los activos de datos y la lógica de negocio esperada. Tenga en cuenta qué tan expuesta estará su aplicación y si necesita segregación de funcionalidades (además del control de acceso). Recopile los requerimientos técnicos, incluidos los funcionales de seguridad y los no funcionales. Planifique y negocie que el presupuesto cubra el diseño, construcción, prueba y operación, incluyendo las actividades de seguridad.",
+   "seccion": "A06:2025 – Diseño Inseguro > Descripción > Gestión de requerimientos y recursos"
+  },
+  {
+   "texto": "El diseño seguro es una cultura y metodología que evalúa constantemente las amenazas y garantiza que el código esté diseñado y probado de manera sólida para prevenir métodos de ataque conocidos. El modelado de amenazas debe estar integrado en sesiones de refinamiento (o actividades similares); buscar cambios en los flujos de datos y el control de acceso u otros controles de seguridad. Durante la creación de las historias de usuario, determine el flujo correcto y los estados de falla. Asegúrese de que sean bien entendidos y acordados por las partes responsables e impactadas. Analice las suposiciones y las condiciones para los flujos esperados y de falla, asegúrese de que aún sean precisos y deseables. Determine cómo validar las suposiciones y hacer cumplir las condiciones necesarias para los comportamientos adecuados. Asegúrese de que los resultados estén documentados en las historias de usuario. Aprenda de los errores y ofrezca incentivos positivos para promover mejoras. El diseño seguro no es un complemento ni una herramienta que pueda agregar al software.",
+   "seccion": "A06:2025 – Diseño Inseguro > Descripción > Diseño seguro"
+  },
+  {
+   "texto": "El software seguro requiere un ciclo de vide de desarrollo seguro, un patrón de diseño seguro, una metodología de carretera pavimentada (\"paved road\"), bibliotecas de componentes seguros, herramientas y modelado de amenazas. Comuníquese con sus especialistas en seguridad desde el comienzo y durante todo el proyecto, así como durante su fase de mantenimiento. Considere aprovechar el Modelo de Madurez para el Aseguramiento del Software (SAMM) para ayudar a estructurar sus esfuerzos de desarrollo de software seguro. A menudo se subestima la autorresponsabilidad de los desarrolladores. Fomente una cultura de conciencia, responsabilidad y mitigación proactiva de riesgos. Los intercambios regulares sobre seguridad (por ejemplo, durante sesiones de modelado de amenazas) pueden generar una mentalidad para incluir la seguridad en todas las decisiones de diseño importantes.",
+   "seccion": "A06:2025 – Diseño Inseguro > Descripción > Ciclo de Desarrollo Seguro (S-SDLC)"
+  },
+  {
+   "texto": "* Establezca y use un ciclo de vida de desarrollo seguro apoyado en Profesionales en Seguridad de Aplicaciones para ayudarlo a evaluar y diseñar la seguridad y controles relacionados con la privacidad * Establezca y utilice un catálogo de patrones de diseño seguros o componentes de \"camino pavimentado\" listos para ser utilizados * Utilice el modelado de amenazas para flujos críticos de autenticación, control de acceso, lógica de negocio y todo clave * Use el modelado de amenazas como herramienta educativa para generar una mentalidad de seguridad * Integre el lenguaje y los controles de seguridad en las historias de usuario * Integre verificaciones de viabilidad en cada capa de su aplicación (desde el frontend al backend) * Escriba pruebas unitarias y de integración para validar que todos los flujos críticos son resistentes al modelo de amenazas. Recopile casos de uso *y* casos de mal uso para cada capa de la aplicación. * Separe las capas del sistema y las capas de red según las necesidades de exposición y protección * Separe a los tenants de manera robusta por diseño en todos los niveles",
+   "seccion": "A06:2025 – Diseño Inseguro > Cómo se previene"
+  },
+  {
+   "texto": "Escenario #1: Un flujo de trabajo de recuperación de credenciales podría incluir \"preguntas y respuestas\", lo cual está prohibido por NIST 800-63b, OWASP ASVS y OWASP Top 10. Las preguntas y respuestas no pueden considerarse como evidencia de identidad, ya que más de una persona puede conocer las respuestas. Dicha funcionalidad debe eliminarse y reemplazarse con un diseño más seguro. Escenario #2: Una cadena de cines permite descuentos en reservas grupales y tiene un máximo de quince asistentes antes de solicitar un depósito. Los atacantes podrían modelar este flujo y probar si pueden encontrar un vector de ataque en la lógica de negocio de la aplicación, por ejemplo, reservar seiscientos asientos en todos los cines a la vez en pocas solicitudes, causando una pérdida masiva de ingresos. Escenario #3: El sitio web de comercio electrónico de una cadena minorista no tiene protección contra bots administrados por revendedores que compran tarjetas de video de alta gama para revender en sitios de subastas. Esto genera una publicidad terrible para los fabricantes de tarjetas de video y los dueños de la cadena minorista, así como un resentimiento duradero entre los entusiastas que no pueden obtener estas tarjetas a ningún precio. El diseño cuidadoso de medidas anti-bot y reglas de lógica de dominio, como compras realizadas a los pocos segundos de la disponibilidad, pueden identificar compras no auténticas y rechazar dichas transacciones.",
+   "seccion": "A06:2025 – Diseño Inseguro > Ejemplos de Escenarios de Ataque"
+  }
+ ]
+}
