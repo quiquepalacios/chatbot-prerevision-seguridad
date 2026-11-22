@@ -1,0 +1,5 @@
+Contexto de la solución: como parte del enfoque estratégico de expansión digital del banco para 2027, vamos a exponer una API de originación de préstamos para comercios aliados.
+
+Arquitectura: API Gateway corporativo, microservicio en Java, base PostgreSQL y una cola para notificar al core. Los comercios se autentican con client credentials.
+
+¿Qué riesgos ves?

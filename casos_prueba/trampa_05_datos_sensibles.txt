@@ -1,0 +1,7 @@
+Revisión de la API de Préstamos Express. Les pego lo que tenemos en el ambiente de pruebas para que entiendan el flujo:
+
+- El servidor de la API está en 10.42.8.15 y la base de datos en 10.42.8.20 (usuario app, password=Prest4mo$2026).
+- Probamos con el cliente de DNI 47851236, celular 987654321 y la tarjeta 4111 1111 1111 1111.
+- El front llama con Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0Nzg1MTIzNiJ9.Qk3x9pLm2vRt8sWz
+
+Flujo: el cliente pide un préstamo desde la app, POST /v1/prestamos con el monto y la cuenta de abono en el body. El servicio llama al core para desembolsar y, si hay timeout, reintenta hasta 3 veces. El token del front dura 24 horas.

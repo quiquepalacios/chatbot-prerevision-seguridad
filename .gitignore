@@ -1,0 +1,34 @@
+# entorno y artefactos
+.venv/
+.venv-roto/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+wheels/
+
+# configuración local (nunca la clave en el repositorio)
+.env
+
+# datos generados
+chroma_db/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/logs/
+data/informes/
+run.log
+diagnostico.txt
+
+# fuentes descargadas (las baja scripts/descargar_fuentes.py)
+conocimiento/fuentes/*
+!conocimiento/fuentes/.gitkeep
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# configuración local del editor/agente
+.claude/
+
+# resultados de scripts/evaluar_casos.py (el resumen va en docs/)
+data/evaluacion/

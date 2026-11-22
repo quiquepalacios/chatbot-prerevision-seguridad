@@ -1,0 +1,33 @@
+{
+  "_descripcion": "Reglas de scripts/importar_fuentes.py. Los patrones son comodines (*, ?) sobre el nombre del archivo, sin distinguir mayúsculas. Se pueden agregar reglas sin tocar el código.",
+  "excluir": [
+    {"patron": "*AWS-Well-Architected*", "motivo": "copia antigua bajada de Scribd, no es la versión oficial vigente"},
+    {"patron": "caso_*", "motivo": "caso de prueba: nunca se indexa (se usa para evaluar al bot)"},
+    {"patron": "respuestas_esperadas*", "motivo": "hoja de respuestas: nunca se indexa"},
+    {"patron": "casos de prueba*", "motivo": "notas de casos de prueba: nunca se indexan"},
+    {"patron": "Fuentes.txt", "motivo": "notas de trabajo, no es un lineamiento"}
+  ],
+  "zip": {
+    "SiteCheatSheet.zip": {
+      "_motivo": "el sitio completo trae más de 100 cheat sheets; solo se usan las 10 elegidas (las mismas que baja scripts/descargar_fuentes.py). Para sumar otra, agrega su patrón aquí.",
+      "incluir": [
+        "site/cheatsheets/Authorization_Cheat_Sheet.html",
+        "site/cheatsheets/REST_Security_Cheat_Sheet.html",
+        "site/cheatsheets/JSON_Web_Token_Cheat_Sheet.html",
+        "site/cheatsheets/Microservices_Security_Cheat_Sheet.html",
+        "site/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+        "site/cheatsheets/File_Upload_Cheat_Sheet.html",
+        "site/cheatsheets/Logging_Cheat_Sheet.html",
+        "site/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        "site/cheatsheets/Input_Validation_Cheat_Sheet.html",
+        "site/cheatsheets/Mass_Assignment_Cheat_Sheet.html"
+      ]
+    }
+  },
+  "licencias": [
+    {"patron": "NIST*", "licencia": "Dominio público (NIST, Gobierno de EE. UU.)"},
+    {"patron": "*OWASP*", "licencia": "CC BY-SA 4.0 (OWASP Foundation)"},
+    {"patron": "*Cheat_Sheet*", "licencia": "CC BY-SA 4.0 (OWASP Foundation)"},
+    {"patron": "politicas_seguridad_banco_andesur*", "licencia": "Documento ficticio del proyecto"}
+  ]
+}

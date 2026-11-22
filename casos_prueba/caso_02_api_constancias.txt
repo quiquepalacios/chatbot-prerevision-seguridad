@@ -1,0 +1,37 @@
+hola equipo de arqui de seguridad, les paso la info de la api de constancias para la revision
+
+somos la celula Documentos Digitales. la api genera y entrega constancias (de deuda, de no adeudo, de cuenta) y estados de cuenta en pdf. la va a consumir la app de Banca Movil (otra celula), nosotros no tenemos front
+
+es una API REST en Flask (python) con PostgreSQL. mientras integramos con el login central del banco tiene su propio registro y login, lo cambiamos en la fase 2
+
+endpoints:
+
+/clientes/v1  -> lista de clientes (usuario y email), es publico
+/clientes/v1/_debug  -> lo mismo pero con todos los campos, lo usamos en dev para ver si se crearon bien (sale el password tambien 😅). no se si lo quitamos para prod, no creo q estorbe
+/clientes/v1/registro  -> registro, recibe el json y crea el usuario. si mandas "admin": true se crea como admin, asi backoffice crea sus cuentas
+/clientes/v1/login  -> devuelve el jwt
+/clientes/v1/{dni}  -> datos de un cliente. el dni de la url se mete tal cual en la consulta a la base
+/clientes/v1/{dni}/email  -> cambiar email, el formato se valida con una regex q encontramos en stackoverflow
+/clientes/v1/{dni}/password  -> cambiar password, tienes q estar logueado
+/documentos/v1  -> listar y generar documentos
+/documentos/v1/{codigo}  -> descargar un documento, pide token
+/createdb  -> borra y recrea la base con datos de prueba
+
+los passwords se guardan como texto, mas adelante les ponemos hash
+
+login: si el usuario no existe responde "usuario no existe" y si el pass esta mal "password incorrecto", asi el cliente sabe q corregir
+
+jwt HS256, la clave esta en config.py (es una palabra corta, la cambiamos despues). la expiracion no me acuerdo, creo q la dejamos alta para las pruebas
+
+sobre la integracion con Banca Movil:
+- ellos llaman con un token de servicio fijo q les dimos (no vence) y mandan el dni del cliente en el header X-Cliente-DNI. nosotros devolvemos los documentos de ese dni. el token tiene acceso a todos los clientes porque si no tendriamos q pedir un login por cada uno
+- cuando se genera el pdf lo subimos a un bucket y devolvemos un link directo. el link no vence para q el cliente lo pueda reenviar por whatsapp al notario o a la inmobiliaria
+
+ambiente de QA: para q las pruebas sean reales cargamos una copia de produccion del mes pasado (clientes y documentos). la fabrica de software q nos apoya con las pruebas tiene acceso a QA por VPN
+
+logs: guardamos el request y response completos en la herramienta de logs en la nube para poder depurar
+
+no hay rate limit ni waf. va a estar detras del api gateway del banco pero ahi todavia no configuramos nada
+
+queremos salir en 2 semanas, cualquier cosa me escriben
+gracias!!

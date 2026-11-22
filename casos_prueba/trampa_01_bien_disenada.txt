@@ -1,0 +1,32 @@
+Solicitud de pre-revisión - API de Alertas de Consumo (squad Tarjetas Digitales)
+
+Qué hace: envía al cliente una notificación push cuando su tarjeta registra un consumo y le permite ver sus últimas alertas en la app de Banca Móvil. No mueve dinero ni cambia datos de contacto.
+
+Componentes
+- App Banca Móvil (existente) -> API Gateway corporativo -> servicio alertas-api (Java 21, Spring Boot) en el clúster Kubernetes del banco.
+- alertas-worker consume del tópico de autorizaciones del switch (Kafka corporativo, mTLS) y guarda la alerta en PostgreSQL (esquema propio, usuario de base de datos exclusivo del servicio, cifrado en reposo con claves del banco).
+- Las notificaciones salen por el servicio corporativo de mensajería push; no se usan proveedores nuevos.
+
+Autenticación y autorización
+- Los clientes se autentican con el IAM corporativo (OAuth 2.0 + PKCE). Tokens de acceso de 10 minutos firmados con RS256 por el IAM y refresh tokens rotativos; la revocación la maneja el IAM.
+- El API Gateway valida el token. alertas-api toma el identificador del cliente solo del token (claim sub) y nunca de la URL ni de headers enviados por otros sistemas.
+- Endpoints: GET /v1/alertas (las del cliente del token, paginado, máximo 50) y PATCH /v1/alertas/{id}/leida. En el PATCH el servicio verifica en la base que la alerta pertenezca al cliente del token; si no, responde 404. Los ids son UUID, pero la validación de dueño se hace igual.
+- El esquema de entrada solo acepta los campos esperados; cualquier otro campo se rechaza con 400.
+- No hay funciones administrativas en esta API.
+
+Datos
+- La alerta guarda: id, cliente (identificador interno), comercio, monto, moneda, fecha y los últimos 4 dígitos de la tarjeta. No se recibe ni se guarda el número completo ni el CVV; el switch ya los envía tokenizados.
+- Retención: 90 días, con un job diario de borrado.
+- QA usa datos sintéticos generados con el proceso corporativo; QA no tiene conectividad con producción.
+
+Comunicación entre servicios
+- worker y api usan cuentas de servicio propias con OAuth client credentials, tokens de 15 minutos y solo los permisos de su función (lectura del tópico; escritura en su esquema).
+- Todo el tráfico va por TLS 1.2 o superior, también dentro del clúster.
+
+Secretos, registro y errores
+- Credenciales y certificados en el vault corporativo; nada en el repositorio.
+- Logs estructurados sin cuerpos de request ni datos de tarjeta; los eventos de seguridad (tokens inválidos, accesos denegados) van al SIEM, con alertas por picos de 404 en el PATCH y por volumen anómalo.
+- Los errores al usuario son genéricos con un código de referencia.
+- API registrada en el inventario corporativo (v1, sin versiones anteriores). Rate limiting en el gateway: 30 solicitudes por minuto por cliente. Swagger y métricas solo en la red interna.
+
+Pendiente de nuestro lado: definir el tiempo de espera del consumidor de Kafka.

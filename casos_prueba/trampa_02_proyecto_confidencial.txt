@@ -1,0 +1,5 @@
+Hola, les comparto el diseño del Proyecto Vicuña para la revisión.
+
+Es una API REST en Node.js detrás del API Gateway. Los clientes se autentican con el IAM del banco y consultan sus ofertas de crédito preaprobado con GET /v1/ofertas. El servicio lee las ofertas desde el data lake y las guarda en caché por 15 minutos.
+
+¿Qué nos falta para salir en diciembre?

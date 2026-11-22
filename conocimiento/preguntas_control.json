@@ -1,0 +1,144 @@
+{
+  "_descripcion": "Preguntas de control del índice (scripts/indexar.py). 'esperadas' son prefijos de cita: basta que uno aparezca entre los fragmentos recuperados. Las de 'fuera_de_tema' no deberían superar el umbral. Son preguntas nuevas, no salen de los casos de prueba. 'en_tema' mezcla preguntas como las haría un líder técnico y consultas técnicas como las que arma el modelo al llamar a buscar_lineamiento.",
+  "en_tema": [
+    {
+      "pregunta": "¿Cómo evito que un cliente vea la cuenta de otro cambiando el ID en la URL?",
+      "esperadas": [
+        "POL-01.1",
+        "POL-01.2",
+        "API1:2023",
+        "ASVS V8",
+        "OWASP Cheat Sheet: Authorization"
+      ]
+    },
+    {
+      "pregunta": "El código OTP tiene 4 dígitos y no hay límite de intentos",
+      "esperadas": [
+        "POL-02.2",
+        "POL-02.6",
+        "API2:2023",
+        "ASVS V6"
+      ]
+    },
+    {
+      "pregunta": "El backend descarga una imagen desde una URL que envía el usuario",
+      "esperadas": [
+        "POL-08",
+        "API7:2023",
+        "OWASP Cheat Sheet: Server Side Request Forgery"
+      ]
+    },
+    {
+      "pregunta": "Las contraseñas se guardan en texto plano en la base de datos",
+      "esperadas": [
+        "POL-10",
+        "ASVS V6",
+        "ASVS V11",
+        "A04:2025",
+        "A07:2025"
+      ]
+    },
+    {
+      "pregunta": "Guardamos el token JWT en el localStorage del navegador",
+      "esperadas": [
+        "POL-04.4",
+        "OWASP Cheat Sheet: JSON Web Token",
+        "ASVS V3",
+        "ASVS V7"
+      ]
+    },
+    {
+      "pregunta": "El endpoint de registro acepta un campo admin igual a true en el JSON",
+      "esperadas": [
+        "POL-01.5",
+        "API3:2023",
+        "API5:2023",
+        "OWASP Cheat Sheet: Mass Assignment"
+      ]
+    },
+    {
+      "pregunta": "Usamos una copia de los datos reales de clientes en el ambiente de QA",
+      "esperadas": [
+        "POL-12"
+      ]
+    },
+    {
+      "pregunta": "Los logs no se envían al SIEM y no hay alertas de seguridad",
+      "esperadas": [
+        "POL-14",
+        "A09:2025",
+        "OWASP Cheat Sheet: Logging",
+        "ASVS V16"
+      ]
+    },
+    {
+      "pregunta": "Si el core bancario no responde, reintentamos el abono sin control de duplicados",
+      "esperadas": [
+        "POL-06"
+      ]
+    },
+    {
+      "pregunta": "La aplicación guarda el número completo de la tarjeta y el CVV",
+      "esperadas": [
+        "POL-11"
+      ]
+    },
+    {
+      "pregunta": "How should microservices authenticate each other inside the cluster?",
+      "esperadas": [
+        "POL-05",
+        "NIST SP 800-204",
+        "OWASP Cheat Sheet: Microservices",
+        "NIST SP 800-207"
+      ]
+    },
+    {
+      "pregunta": "Un proveedor externo recibe el DNI y el celular de los clientes",
+      "esperadas": [
+        "POL-13",
+        "POL-15",
+        "API10:2023"
+      ]
+    },
+    {
+      "pregunta": "BOLA: validar en el servidor que el recurso pertenece al usuario autenticado",
+      "esperadas": [
+        "POL-01.1",
+        "POL-01.2",
+        "API1:2023",
+        "ASVS V8"
+      ]
+    },
+    {
+      "pregunta": "broken object level authorization IDOR ownership check",
+      "esperadas": [
+        "POL-01",
+        "API1:2023",
+        "OWASP Cheat Sheet: Authorization"
+      ]
+    },
+    {
+      "pregunta": "SSRF el backend llama a una URL enviada por el cliente",
+      "esperadas": [
+        "POL-08",
+        "API7:2023",
+        "OWASP Cheat Sheet: Server Side Request Forgery"
+      ]
+    },
+    {
+      "pregunta": "asignación masiva: el cliente puede enviar el campo rol o admin al registrarse",
+      "esperadas": [
+        "POL-01.5",
+        "API3:2023",
+        "OWASP Cheat Sheet: Mass Assignment"
+      ]
+    }
+  ],
+  "fuera_de_tema": [
+    "¿Cuál es la receta del ceviche?",
+    "¿Quién ganó el partido de fútbol de ayer?",
+    "¿Cuál es el saldo de mi cuenta de ahorros?",
+    "Recomiéndame una película para el fin de semana",
+    "¿Cuánto cuesta un pasaje a Cusco?"
+  ]
+}

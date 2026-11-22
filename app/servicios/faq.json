@@ -1,0 +1,96 @@
+{
+  "_descripcion": "Preguntas frecuentes del proceso de revisión (caso ficticio Banco Andesur). Si la similitud supera FAQ_UMBRAL, se responde esto sin llamar al modelo. Las respuestas citan su fuente igual que un hallazgo.",
+  "faqs": [
+    {
+      "id": "FAQ-SALUDO",
+      "categoria": "conversacion",
+      "pregunta": "hola",
+      "variaciones": ["buenos días", "buenas tardes", "buenas noches", "hola, ¿qué tal?", "hey", "saludos", "¿qué puedes hacer?", "¿qué haces?", "¿cómo me ayudas?", "ayuda"],
+      "respuesta": "Hola. Soy el asistente de pre-revisión de seguridad de Banco Andesur. Descríbeme tu solución web o API (componentes, endpoints, autenticación, datos que maneja e integraciones) y te devuelvo los hallazgos con su prioridad, la regla que aplica (POL-XX.N u OWASP) y qué puntos tienes que llevar a Arquitectura de Seguridad. No apruebo pases a producción."
+    },
+    {
+      "id": "FAQ-GRACIAS",
+      "categoria": "conversacion",
+      "pregunta": "gracias",
+      "variaciones": ["muchas gracias", "gracias por la ayuda", "ok gracias", "perfecto, gracias", "adiós", "hasta luego", "chao"],
+      "respuesta": "De nada. Si cambias el diseño, vuelve a describirlo y repasamos los puntos pendientes."
+    },
+    {
+      "id": "FAQ-PEDIR-REVISION",
+      "categoria": "proceso",
+      "pregunta": "¿Cómo pido la revisión de Arquitectura de Seguridad?",
+      "variaciones": ["¿cómo solicito una revisión de seguridad?", "¿dónde pido la revisión de seguridad?", "¿cómo pido la aprobación de Seguridad?", "¿qué tengo que hacer para que Seguridad revise mi solución?", "proceso de revisión de seguridad", "¿cómo llego a Seguridad?", "¿Qué necesito para que Seguridad apruebe el pase?"],
+      "respuesta": "Haz primero esta pre-revisión y corrige lo que puedas resolver en tu equipo. Luego solicita la revisión a Arquitectura de Seguridad adjuntando el documento de diseño y el informe exportado de esta pre-revisión (MD o CSV), con los puntos marcados \"va a Seguridad\". Las soluciones con puntos de revisión obligatoria no pueden pasar a producción sin su aprobación expresa. Fuente: LSA-2026, \"Cómo usar este documento\"."
+    },
+    {
+      "id": "FAQ-DEMORA",
+      "categoria": "proceso",
+      "pregunta": "¿Cuánto demora la revisión de Seguridad?",
+      "variaciones": ["¿cuánto tarda Seguridad en revisar?", "¿en cuánto tiempo responde Seguridad?", "tiempo de la revisión de seguridad", "¿cuántos días demora la revisión?", "¿por qué demora tanto Seguridad?"],
+      "respuesta": "En el caso Banco Andesur, el área de Arquitectura de Seguridad (3 especialistas para unos 25 squads) suele tomar entre 2 y 3 semanas en empezar una revisión. Llegar con los errores básicos ya corregidos y con los puntos de revisión obligatoria identificados es lo que más acorta ese tiempo. (Cifras supuestas del caso ficticio.)"
+    },
+    {
+      "id": "FAQ-QUE-ENVIAR",
+      "categoria": "proceso",
+      "pregunta": "¿Qué información debo enviar para la pre-revisión?",
+      "variaciones": ["¿qué datos necesitas de mi arquitectura?", "¿qué te tengo que contar de mi solución?", "¿qué debo describir?", "¿cómo describo mi arquitectura?", "¿qué información necesitas?"],
+      "respuesta": "Cuéntame, en el formato que tengas (documento de diseño, mensaje o formulario): 1) componentes y dónde corren (nube, on-premise, terceros); 2) endpoints o pantallas principales y quién los consume; 3) cómo se autentican clientes, usuarios internos y servicios; 4) cómo se controla que cada uno vea solo lo suyo; 5) qué datos maneja (personales, tarjetas, montos); 6) integraciones con el core, proveedores o webhooks; 7) registro y monitoreo. No incluyas claves, IPs reales ni datos de clientes: igual los enmascaro."
+    },
+    {
+      "id": "FAQ-QUE-NO-HACE",
+      "categoria": "alcance",
+      "pregunta": "¿Qué no hace este asistente?",
+      "variaciones": ["¿puedes aprobar mi pase a producción?", "¿reemplazas a Seguridad?", "¿revisas código?", "¿haces pentest?", "límites del asistente", "¿qué alcance tienes?"],
+      "respuesta": "No apruebo ni rechazo pases a producción (eso lo decide Arquitectura de Seguridad), no reviso código ni hago pruebas de penetración y no proceso información de proyectos confidenciales ni temas estratégicos. Reviso el diseño, pregunto lo que falta, sugiero mejoras con su fuente y te indico qué llevar a Seguridad."
+    },
+    {
+      "id": "FAQ-REVISION-OBLIGATORIA",
+      "categoria": "proceso",
+      "pregunta": "¿Qué significa que un punto va a Seguridad o tiene revisión obligatoria?",
+      "variaciones": ["¿qué es revisión obligatoria?", "¿qué puntos van a Seguridad?", "¿cuándo tengo que ir a Seguridad?", "¿qué significa requiere seguridad?", "¿qué va a Seguridad?"],
+      "respuesta": "Cada política de LSA-2026 tiene una sección \"Revisión obligatoria\" que dice en qué casos la solución no puede pasar a producción sin la aprobación expresa de Arquitectura de Seguridad (por ejemplo, endpoints con datos de cuentas o tarjetas, flujos que mueven dinero o autenticación fuera del IAM corporativo). Cuando un hallazgo cae en uno de esos casos, o es de severidad alta, lo marco \"va a Seguridad\". Fuente: LSA-2026."
+    },
+    {
+      "id": "FAQ-EXCEPCION",
+      "categoria": "proceso",
+      "pregunta": "¿Cómo pido una excepción a una política?",
+      "variaciones": ["¿puedo no cumplir una regla?", "¿cómo solicito una excepción de seguridad?", "excepción a un lineamiento", "¿qué hago si no puedo cumplir una política?"],
+      "respuesta": "Las excepciones se solicitan por escrito a Arquitectura de Seguridad, con un plazo de vigencia y un plan de remediación. Yo no puedo otorgarlas. Fuente: LSA-2026, \"Cómo usar este documento\"."
+    },
+    {
+      "id": "FAQ-FUENTES",
+      "categoria": "alcance",
+      "pregunta": "¿Qué fuentes usas para revisar?",
+      "variaciones": ["¿de dónde sacas las recomendaciones?", "¿en qué te basas?", "¿qué documentos consultas?", "¿qué lineamientos usas?", "¿usas OWASP?"],
+      "respuesta": "Consulto, sin entrenar con ellos: los lineamientos internos LSA-2026 de Banco Andesur (15 políticas, 73 reglas POL-XX.N), OWASP ASVS 5.0, OWASP API Security Top 10 2023, OWASP Top 10:2025, 10 OWASP Cheat Sheets y NIST SP 800-204, 800-207, 800-218 y 800-63B. Cada hallazgo cita la regla o el requisito de donde sale."
+    },
+    {
+      "id": "FAQ-BOLA",
+      "categoria": "conceptos",
+      "pregunta": "¿Qué es BOLA?",
+      "variaciones": ["¿qué es broken object level authorization?", "¿qué es IDOR?", "explícame BOLA", "¿qué significa API1:2023?", "¿qué es la autorización a nivel de objeto?"],
+      "respuesta": "BOLA (Broken Object Level Authorization) es cuando un endpoint recibe el identificador de un recurso (una cuenta, un documento, un vehículo) y no valida en el servidor que ese recurso pertenezca al usuario autenticado: cambiando el ID se ven o modifican datos de otros. Usar UUID no lo evita. Fuentes: OWASP API1:2023, POL-01.1 y POL-01.2."
+    },
+    {
+      "id": "FAQ-BFLA",
+      "categoria": "conceptos",
+      "pregunta": "¿Qué es BFLA?",
+      "variaciones": ["¿qué es broken function level authorization?", "¿qué significa API5:2023?", "explícame BFLA", "¿qué pasa si escondo el botón de admin?"],
+      "respuesta": "BFLA (Broken Function Level Authorization) es cuando una función administrativa o de un rol superior se puede invocar sin que el servidor valide el rol: ocultar la opción en el menú no es un control. Fuentes: OWASP API5:2023 y POL-01.4."
+    },
+    {
+      "id": "FAQ-SSRF",
+      "categoria": "conceptos",
+      "pregunta": "¿Qué es SSRF?",
+      "variaciones": ["¿qué es server side request forgery?", "¿qué significa API7:2023?", "explícame SSRF", "¿qué riesgo tiene llamar a una URL que manda el usuario?"],
+      "respuesta": "SSRF (Server-Side Request Forgery) ocurre cuando el backend hace una petición a una URL que controla el usuario: el atacante puede alcanzar servicios internos o metadatos de la nube. Se mitiga con listas de destinos permitidos y validando la URL en el servidor. Fuentes: OWASP API7:2023, OWASP Cheat Sheet: Server Side Request Forgery Prevention y POL-08."
+    },
+    {
+      "id": "FAQ-MASS-ASSIGNMENT",
+      "categoria": "conceptos",
+      "pregunta": "¿Qué es la asignación masiva?",
+      "variaciones": ["¿qué es mass assignment?", "¿qué significa API3:2023?", "¿qué pasa si el cliente manda el campo admin?", "explícame mass assignment"],
+      "respuesta": "La asignación masiva (mass assignment) es aceptar del cliente propiedades que no debería poder cambiar (rol, admin, estado, precio) porque el backend copia el JSON recibido tal cual al objeto. Se mitiga con una lista explícita de campos permitidos por operación. Fuentes: OWASP API3:2023, OWASP Cheat Sheet: Mass Assignment y POL-01.5."
+    }
+  ]
+}

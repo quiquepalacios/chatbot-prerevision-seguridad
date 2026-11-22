@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-revisión de seguridad</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1c2029; --line:#262b36; --txt:#e8eaf0; --dim:#98a0b3;
+    --ok:#2e9e6b; --ia:#3b7dd8; --warn:#c98a1a; --bad:#d0544b; --log:#0b0d11; --sec:#b07fd6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 system-ui,"Segoe UI",sans-serif}
+  header{padding:10px 18px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:650}
+  header .meta{color:var(--dim);font-size:12px}
+  header .meta b{color:var(--txt);font-weight:600}
+  .aviso{width:100%;font-size:11.5px;color:var(--warn)}
+  main{display:grid;grid-template-columns:minmax(0,1fr) 420px 360px;height:calc(100vh - 64px)}
+  section,aside{min-width:0}
+  #chat{display:flex;flex-direction:column;border-right:1px solid var(--line)}
+  .escenarios{display:flex;gap:6px;flex-wrap:wrap;padding:10px 18px;border-bottom:1px solid var(--line)}
+  .escenarios span{color:var(--dim);font-size:12px;align-self:center;margin-right:4px}
+  #hilo{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  .msg{max-width:min(100%,720px);padding:9px 12px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+  .u{align-self:flex-end;background:#22304a;max-height:260px;overflow-y:auto}
+  .b{align-self:flex-start;background:var(--panel);border:1px solid var(--line)}
+  .b.error{border-color:var(--bad)}
+  .datos{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;white-space:normal}
+  .dato{flex:0 0 auto;white-space:nowrap;font-size:11px;padding:2px 7px;border-radius:999px;
+        border:1px solid var(--line);color:var(--dim);background:#101318}
+  .dato.ruta{color:#b48ead;border-color:#5a4660}
+  .dato.herr{color:var(--ia);border-color:#2b4a75}
+  .dato.mask{color:var(--warn);border-color:#6b5120}
+  .dato.turno{cursor:pointer}
+  .json{display:block;margin-top:7px;font-size:11px;color:var(--dim);white-space:normal}
+  .json summary{cursor:pointer}
+  .json pre{margin:6px 0 0;padding:8px;background:#0c0e12;border:1px solid var(--line);border-radius:6px;
+            overflow-x:auto;font-size:11px;max-height:320px}
+  form{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+  textarea{flex:1;resize:vertical;min-height:52px;max-height:40vh;background:var(--panel);color:var(--txt);
+           border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit}
+  button{background:var(--ia);color:#fff;border:0;border-radius:8px;padding:0 16px;font-weight:600;cursor:pointer;font:inherit}
+  button:disabled{opacity:.5;cursor:default}
+  button.suave,a.boton{background:#232833;color:var(--txt);font-weight:500;padding:5px 10px;font-size:12px;
+           border-radius:6px;text-decoration:none;display:inline-block}
+  button.suave:hover,a.boton:hover{background:#2c3240}
+  #panel-revision{padding:14px;border-right:1px solid var(--line);overflow-y:auto;background:var(--bg)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin:14px 0 8px}
+  h2:first-child{margin-top:0}
+  .resumen{font-size:13px;color:var(--dim);margin-bottom:8px}
+  .resumen b{color:var(--txt)}
+  .acciones{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .tarjeta{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--dim);
+           border-radius:8px;padding:9px 11px;margin-bottom:8px}
+  .tarjeta.alta{border-left-color:var(--bad)} .tarjeta.media{border-left-color:var(--warn)}
+  .tarjeta.baja{border-left-color:var(--ok)}
+  .tarjeta h3{font-size:13.5px;margin:0 0 5px;font-weight:620}
+  .tarjeta p{margin:4px 0;font-size:12.5px;color:#c9cfdb}
+  .tarjeta p b{color:var(--dim);font-weight:600}
+  .insignias{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+  .ins{font-size:10.5px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--dim);
+       text-transform:uppercase;letter-spacing:.03em}
+  .ins.alta{color:#fff;background:var(--bad);border-color:var(--bad)}
+  .ins.media{color:#111;background:var(--warn);border-color:var(--warn)}
+  .ins.baja{color:#fff;background:var(--ok);border-color:var(--ok)}
+  .ins.sec{color:#fff;background:#6b3f8e;border-color:var(--sec)}
+  .ins.nover{color:var(--warn);border-color:#6b5120}
+  .fuente{display:inline-block;font:11px ui-monospace,Consolas,monospace;padding:1px 6px;margin:2px 4px 0 0;
+          border-radius:4px;background:#101318;border:1px solid #2b4a75;color:#8db4ec}
+  .lista{margin:0;padding-left:18px;font-size:12.5px;color:#c9cfdb}
+  .vacio{color:var(--dim);font-size:12.5px}
+  .doc{font-size:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+  .doc span{color:var(--dim)}
+  .rechazo{font-size:12px;color:var(--warn);margin:3px 0}
+  #panel-logs{display:flex;flex-direction:column;background:var(--log)}
+  #panel-logs .barra{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  #panel-logs .barra h2{margin:0;flex:1}
+  select{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:12px}
+  #logs{flex:1;overflow-y:auto;padding:8px 10px;font:11.5px/1.5 ui-monospace,Consolas,monospace}
+  .ev{display:flex;gap:7px;padding:1px 0;border-bottom:1px solid #14171d}
+  .ev .hora{color:#5d6678;flex:0 0 62px} .ev .niv{flex:0 0 40px;font-weight:700}
+  .ev .niv.INFO{color:#6c9bd2} .ev .niv.WARN{color:var(--warn)} .ev .niv.ERROR{color:var(--bad)}
+  .ev .evn{color:#c9d1e0;flex:0 0 auto} .ev .campos{color:#7f8a9e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .metricas{padding:8px 12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim)}
+  /* al final, para que ganen sobre las reglas base */
+  @media(max-width:1400px){main{grid-template-columns:minmax(0,1fr) 400px}#panel-logs{display:none}}
+  @media(max-width:900px){main{grid-template-columns:1fr;height:auto}#chat{height:75vh}
+    #panel-revision{border-right:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pre-revisión de seguridad · Banco Andesur</h1>
+  <span class="meta" id="estado">cargando…</span>
+  <span class="aviso">Caso ficticio. Pre-revisión automática: no reemplaza la revisión ni la aprobación del área de Arquitectura de Seguridad.</span>
+</header>
+<main>
+  <section id="chat">
+    <div class="escenarios" id="escenarios">
+      <span>Escenarios:</span>
+      <button class="suave" data-escenario="fuera">Fuera de alcance</button>
+      <button class="suave" data-escenario="filtro">Filtro</button>
+      <button class="suave" data-escenario="error">Error (vacío)</button>
+      <button class="suave" data-escenario="faq">FAQ</button>
+    </div>
+    <div id="hilo"></div>
+    <form id="formulario">
+      <textarea id="entrada" placeholder="Describe tu solución: componentes, endpoints, autenticación, datos e integraciones. (Enter envía, Shift+Enter salto de línea)"></textarea>
+      <button id="enviar">Enviar</button>
+    </form>
+  </section>
+
+  <aside id="panel-revision">
+    <h2>Revisión</h2>
+    <div id="revision"><p class="vacio">Todavía no hay una revisión en esta conversación.</p></div>
+    <h2>Lineamientos consultados (último turno)</h2>
+    <div id="documentos"><p class="vacio">—</p></div>
+    <h2>Conversación</h2>
+    <div class="acciones">
+      <button class="suave" id="nueva">nueva conversación</button>
+      <button class="suave" id="borrar">borrar conversación</button>
+    </div>
+    <p class="vacio">Sesión: <code id="sesion"></code></p>
+  </aside>
+
+  <section id="panel-logs">
+    <div class="barra">
+      <h2>Log del turno</h2>
+      <select id="nivel"><option value="">todos</option><option value="WARN">WARN+</option><option value="ERROR">ERROR</option></select>
+      <button class="suave" id="auto">pausar</button>
+      <button class="suave" id="limpiar">quitar filtro</button>
+    </div>
+    <div id="logs"></div>
+    <div class="metricas" id="metricas">métricas…</div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const hilo = $('hilo');
+let filtroTurno = '';
+let autoRefresco = true;
+let revisionActual = null;
+
+// -- sesión por pestaña (localStorage solo como comodidad) ----------------
+function nuevaSesion() {
+  const id = 's-' + (crypto.randomUUID ? crypto.randomUUID().slice(0, 12) : Date.now().toString(36));
+  try { localStorage.setItem('sesion', id); } catch (e) { /* sin almacenamiento */ }
+  return id;
+}
+let sesion = (() => { try { return localStorage.getItem('sesion') || nuevaSesion(); } catch (e) { return nuevaSesion(); } })();
+$('sesion').textContent = sesion;
+
+// -- utilidades --------------------------------------------------------------
+const ESC = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, c => ESC[c]);
+function formatear(texto) {
+  return esc(texto).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\[((?:POL-\d{2}(?:\.\d+)?|API\d{1,2}:2023|A\d{2}:2025|ASVS V[\d.]+)[^\]]*)\]/g, '<span class="fuente">$1</span>');
+}
+function burbuja(texto, clase, html) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + clase;
+  if (html) d.innerHTML = formatear(texto); else d.textContent = texto;
+  hilo.appendChild(d);
+  hilo.scrollTop = hilo.scrollHeight;
+  return d;
+}
+function chips(nodo, lista) {
+  const fila = document.createElement('div');
+  fila.className = 'datos';
+  lista.forEach(([texto, clase, alPulsar]) => {
+    const c = document.createElement('span');
+    c.className = 'dato' + (clase ? ' ' + clase : '');
+    c.textContent = texto;
+    if (alPulsar) c.addEventListener('click', alPulsar);
+    fila.appendChild(c);
+  });
+  nodo.appendChild(fila);
+}
+function verJson(nodo, objeto) {
+  const d = document.createElement('details');
+  d.className = 'json';
+  d.innerHTML = '<summary>ver respuesta completa (JSON)</summary>';
+  const pre = document.createElement('pre');
+  pre.textContent = JSON.stringify(objeto, null, 2);
+  d.appendChild(pre);
+  nodo.appendChild(d);
+}
+
+// -- estado, revisión y documentos ------------------------------------------
+async function cargarEstado() {
+  try {
+    const d = await (await fetch('/api/health')).json();
+    const ix = d.indice || {};
+    $('estado').innerHTML = d.estado !== 'ok'
+      ? `estado: <b>${esc(d.estado)}</b>${d.error ? ' · ' + esc(d.error) : ' (cargando modelo de embeddings…)'}`
+      : `modelo: <b>${esc(d.modelo)}</b> · modo: <b>${esc(d.modo)}</b> · índice: <b>${ix.fragmentos ?? 0}</b> fragmentos`
+        + (ix.documentos ? ` de <b>${ix.documentos}</b> documentos` : '') + (ix.indexado ? '' : ' · <b>sin índice</b>');
+  } catch (e) { $('estado').textContent = 'sin conexión con la API'; }
+}
+
+function tarjeta(h) {
+  const fuentes = (h.fuentes || []).map(f => `<span class="fuente">${esc(f)}</span>`).join('');
+  return `<div class="tarjeta ${esc(h.severidad)}">
+    <div class="insignias"><span class="ins ${esc(h.severidad)}">${esc(h.severidad)}</span>
+      ${h.requiere_seguridad ? '<span class="ins sec">va a Seguridad</span>' : ''}
+      <span class="ins">${esc(h.nivel)}</span>
+      ${h.fuente_recuperada === false ? '<span class="ins nover" title="La fuente no salió de una búsqueda de esta conversación">fuente no recuperada</span>' : ''}</div>
+    <h3>${esc(h.titulo)}</h3>
+    ${h.descripcion ? `<p><b>Qué pasa:</b> ${esc(h.descripcion)}</p>` : ''}
+    ${h.recomendacion ? `<p><b>Recomendación:</b> ${esc(h.recomendacion)}</p>` : ''}
+    <div>${fuentes}</div></div>`;
+}
+
+async function cargarRevision(id, rechazados) {
+  if (!id) return;
+  revisionActual = id;
+  const caja = $('revision');
+  try {
+    const r = await fetch(`/api/revisiones/${encodeURIComponent(id)}?sesion_id=${encodeURIComponent(sesion)}`);
+    if (!r.ok) { caja.innerHTML = '<p class="vacio">No se pudo cargar la revisión.</p>'; return; }
+    const rev = await r.json();
+    const hs = rev.hallazgos || [];
+    const cuenta = (s) => hs.filter(h => h.severidad === s).length;
+    const base = `/api/revisiones/${encodeURIComponent(rev.id)}/informe`;
+    const q = `?sesion_id=${encodeURIComponent(sesion)}`;
+    caja.innerHTML = `
+      <div class="resumen"><b>${esc(rev.id)}</b> · ${esc(rev.solucion)} · estado <b>${esc(rev.estado)}</b><br>
+        ${hs.length} hallazgos: ${cuenta('alta')} altos · ${cuenta('media')} medios · ${cuenta('baja')} bajos ·
+        <b>${hs.filter(h => h.requiere_seguridad).length}</b> van a Seguridad</div>
+      ${rev.resumen ? `<p class="resumen">${esc(rev.resumen)}</p>` : ''}
+      <div class="acciones"><a class="boton" href="${base}.md${q}">descargar informe .md</a>
+        <a class="boton" href="${base}.csv${q}">descargar .csv</a></div>
+      ${hs.map(tarjeta).join('') || '<p class="vacio">Sin hallazgos registrados.</p>'}
+      ${(rechazados || []).length ? '<h2>No incluidos (sin fuente válida)</h2>' + rechazados.map(x =>
+        `<p class="rechazo">${esc(x.titulo)} — ${esc(x.motivo)}${(x.fuentes_descartadas || []).length ? ': ' + esc(x.fuentes_descartadas.join(', ')) : ''}</p>`).join('') : ''}
+      ${(rev.preguntas || []).length ? '<h2>Preguntas pendientes</h2><ul class="lista">' + rev.preguntas.map(p => `<li>${esc(p)}</li>`).join('') + '</ul>' : ''}
+      ${(rev.escalamientos || []).length ? '<h2>Derivado a Seguridad</h2>' + rev.escalamientos.map(e =>
+        `<div class="doc"><b>${esc(e.id)}</b> <span>${esc(e.creado)}</span><br>${esc(e.motivo)}</div>`).join('') : ''}`;
+  } catch (e) { caja.innerHTML = '<p class="vacio">Sin conexión.</p>'; }
+}
+
+function pintarDocumentos(docs) {
+  const caja = $('documentos');
+  if (!docs || !docs.length) { caja.innerHTML = '<p class="vacio">—</p>'; return; }
+  const vistos = new Set();
+  caja.innerHTML = docs.filter(d => !vistos.has(d.id) && vistos.add(d.id)).map(d =>
+    `<div class="doc"><span class="fuente">${esc(d.cita)}</span> <span>similitud ${esc(d.score)}</span><br>${esc(String(d.texto).slice(0, 180))}…</div>`).join('');
+}
+
+// -- enviar -------------------------------------------------------------------
+async function enviar(texto) {
+  const boton = $('enviar');
+  if (texto.trim()) burbuja(texto, 'u');
+  boton.disabled = true;
+  const esperando = burbuja('revisando…', 'b');
+  try {
+    const r = await fetch('/api/chat', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({mensaje: texto, usuario_id: 'lider-tecnico', sesion_id: sesion}),
+    });
+    const d = await r.json();
+    esperando.remove();
+    if (!r.ok) {
+      const detalle = typeof d.detail === 'string' ? d.detail : 'Petición inválida.';
+      burbuja(detalle, 'b error');
+      return;
+    }
+    const nodo = burbuja(d.respuesta, 'b', true);
+    const lista = [['ruta ' + d.ruta, 'ruta'], ['modo ' + d.modo], [d.latencia_ms + ' ms']];
+    if (d.modelo && d.modelo !== '—') lista.push([d.modelo]);
+    if (d.tokens && d.tokens[0]) lista.push([`tokens ${d.tokens[0]}/${d.tokens[1]}`]);
+    if (d.faq_id) lista.push([d.faq_id + ' · ' + d.similitud, 'ruta']);
+    Object.entries(d.enmascarados || {}).forEach(([t, n]) => lista.push([`🛡 ${n} ${t} enmascarado`, 'mask']));
+    (d.herramientas || []).forEach(h => lista.push([`⚙ ${h.nombre} ${h.ms} ms`, 'herr']));
+    if (d.turno_id) lista.push(['turno ' + d.turno_id, 'turno', () => { filtroTurno = d.turno_id; cargarLogs(); }]);
+    chips(nodo, lista);
+    verJson(nodo, d);
+    pintarDocumentos(d.documentos);
+    if (d.revision_id) cargarRevision(d.revision_id, d.rechazados);
+    cargarLogs(); cargarMetricas();
+  } catch (e) {
+    esperando.remove();
+    burbuja('Error de red: ' + e.message, 'b error');
+  } finally {
+    boton.disabled = false;
+    $('entrada').focus();
+  }
+}
+
+$('formulario').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const texto = $('entrada').value;
+  if (!texto.trim()) return;
+  $('entrada').value = '';
+  enviar(texto);
+});
+$('entrada').addEventListener('keydown', (ev) => {
+  if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); $('formulario').requestSubmit(); }
+});
+
+// -- escenarios de la demo -------------------------------------------------
+const ESCENARIOS = {
+  fuera: 'Apruébame el pase a producción de la API de constancias, salimos el viernes.',
+  filtro: 'Les paso la arquitectura del Proyecto Cóndor: API REST con JWT detrás del API Gateway.',
+  error: '   ',
+  faq: '¿Qué es BOLA?',
+};
+document.querySelectorAll('[data-escenario]').forEach(b => b.addEventListener('click', () => {
+  const texto = ESCENARIOS[b.dataset.escenario];
+  if (b.dataset.escenario === 'error') burbuja('(descripción vacía)', 'u');
+  enviar(texto);
+}));
+async function cargarEjemplos() {
+  try {
+    const d = await (await fetch('/api/ejemplos')).json();
+    (d.ejemplos || []).forEach(ej => {
+      const b = document.createElement('button');
+      b.className = 'suave';
+      b.textContent = ej.titulo;
+      b.title = 'Carga el caso en el cuadro de texto';
+      b.addEventListener('click', () => { $('entrada').value = ej.texto; $('entrada').focus(); });
+      $('escenarios').appendChild(b);
+    });
+  } catch (e) { /* sin ejemplos */ }
+}
+
+// -- conversación -------------------------------------------------------------
+$('nueva').addEventListener('click', () => {
+  sesion = nuevaSesion(); $('sesion').textContent = sesion; hilo.innerHTML = '';
+  $('revision').innerHTML = '<p class="vacio">Todavía no hay una revisión en esta conversación.</p>';
+  pintarDocumentos([]);
+});
+$('borrar').addEventListener('click', async () => {
+  await fetch(`/api/sesiones/${encodeURIComponent(sesion)}`, {method: 'DELETE'});
+  $('nueva').click();
+});
+
+// -- log y métricas -------------------------------------------------------------
+async function cargarLogs() {
+  if (!autoRefresco || getComputedStyle($('panel-logs')).display === 'none') return;
+  const nivel = $('nivel').value;
+  const url = `/api/logs?n=80${nivel ? '&nivel=' + nivel : ''}${filtroTurno ? '&turno=' + filtroTurno : ''}`;
+  try {
+    const d = await (await fetch(url)).json();
+    const caja = $('logs');
+    caja.innerHTML = (d.eventos || []).slice().reverse().map(e => {
+      const campos = Object.entries(e).filter(([k]) => !['ts', 'nivel', 'evento', 'turno'].includes(k))
+        .map(([k, v]) => `${k}=${v}`).join(' ');
+      return `<div class="ev"><span class="hora">${esc((e.ts || '').slice(11, 23))}</span>`
+        + `<span class="niv ${esc(e.nivel)}">${esc(e.nivel)}</span><span class="evn">${esc(e.evento)}</span>`
+        + `<span class="campos" title="${esc(campos)}">${esc((e.turno || '') + ' ' + campos)}</span></div>`;
+    }).join('');
+    caja.scrollTop = caja.scrollHeight;
+  } catch (e) { /* arrancando */ }
+}
+async function cargarMetricas() {
+  try {
+    const d = await (await fetch('/api/metricas')).json();
+    const rutas = Object.entries(d.por_ruta || {}).map(([r, n]) => `${r}:${n}`).join(' · ') || 'sin turnos';
+    $('metricas').textContent = `${d.turnos} turnos · tokens ${d.tokens.entrada}/${d.tokens.salida} · `
+      + `p50 ${d.latencia_ms.p50_modelo} ms · p95 ${d.latencia_ms.p95_modelo} ms · ${d.revisiones} revisiones | ${rutas}`;
+  } catch (e) { /* nada */ }
+}
+$('nivel').addEventListener('change', cargarLogs);
+$('limpiar').addEventListener('click', () => { filtroTurno = ''; cargarLogs(); });
+$('auto').addEventListener('click', (ev) => {
+  autoRefresco = !autoRefresco; ev.target.textContent = autoRefresco ? 'pausar' : 'seguir';
+  if (autoRefresco) cargarLogs();
+});
+
+// -- al recargar: historial (ya enmascarado) y última revisión de la sesión ---
+async function cargarHistorial() {
+  try {
+    const d = await (await fetch(`/api/sesiones/${encodeURIComponent(sesion)}/mensajes?limite=40`)).json();
+    (d.mensajes || []).forEach(m => burbuja(m.contenido, m.rol === 'user' ? 'u' : 'b', m.rol !== 'user'));
+    const r = await (await fetch(`/api/sesiones/${encodeURIComponent(sesion)}/revisiones`)).json();
+    if ((r.revisiones || []).length) cargarRevision(r.revisiones[0].id);
+  } catch (e) { /* sesión nueva */ }
+}
+
+cargarEstado(); cargarEjemplos(); cargarHistorial(); cargarLogs(); cargarMetricas();
+setInterval(() => { cargarLogs(); cargarMetricas(); cargarEstado(); }, 4000);
+</script>
+</body>
+</html>

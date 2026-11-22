@@ -1,0 +1,26 @@
+# Chatbot de pre-revisión de seguridad — Banco Andesur
+# Python 3.12 (64 bits). Versiones fijadas y probadas en Windows 11.
+
+# API y servidor
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+pydantic==2.14.4
+python-dotenv==1.2.4
+httpx==0.28.1
+truststore==0.10.5
+
+# Clasificador de preguntas frecuentes (TF-IDF)
+scikit-learn==1.9.1
+numpy==2.5.5
+
+# RAG: lectura de fuentes, fragmentos por oraciones, embeddings y base vectorial
+pypdf==7.1.1
+beautifulsoup4==4.15.0
+spacy==3.8.18
+sentence-transformers==6.3.0
+transformers==5.24.0
+torch==2.15.0
+chromadb==1.5.9
+
+# Pruebas
+pytest==9.2.0

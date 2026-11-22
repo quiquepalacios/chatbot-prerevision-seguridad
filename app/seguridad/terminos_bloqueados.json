@@ -1,0 +1,16 @@
+{
+  "_descripcion": "Términos que detienen el turno ANTES de llamar al modelo: el texto no se envía al proveedor ni se guarda. Se comparan sin mayúsculas ni tildes y como palabras completas. Los nombres son ficticios (caso Banco Andesur). Para agregar uno, súmalo a la lista y reinicia el servidor.",
+  "proyectos_confidenciales": [
+    {"nombre": "Proyecto Cóndor", "alias": ["Cóndor"]},
+    {"nombre": "Proyecto Vicuña", "alias": ["Vicuña"]},
+    {"nombre": "Proyecto Quipu", "alias": ["Quipu"]},
+    {"nombre": "Fusión Pacífico", "alias": []}
+  ],
+  "expresiones_bloqueadas": [
+    {"expresion": "enfoque estratégico", "motivo": "tema estratégico del banco"}
+  ],
+  "mensajes": {
+    "proyecto": "Tu mensaje menciona un proyecto confidencial ({termino}). Por política del banco no puedo procesarlo: no se envió al modelo ni se guardó. Describe la arquitectura sin el nombre del proyecto o coordina la revisión directamente con Arquitectura de Seguridad.",
+    "expresion": "Tu mensaje toca un tema estratégico del banco (\"{termino}\"). Ese contenido no se procesa con esta herramienta: no se envió al modelo ni se guardó. Quita esa parte y vuelve a enviar solo la descripción técnica de la solución."
+  }
+}
